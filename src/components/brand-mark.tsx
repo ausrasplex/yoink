@@ -6,16 +6,17 @@ import { cn } from "@/lib/utils";
  * designed — no background behind transparent ones, nothing clipped.
  */
 /**
- * The app's name lockup: the landscape logo (Branding) when set — it already contains the name — otherwise the icon
- * next to the name. `size` picks the height used in the sidebar/top bar ("md") or the sign-in screens ("lg").
+ * The app's name lockup: the landscape logo when there is one (it already contains the name), otherwise the icon next to
+ * the name. Images are URLs, worked out by brandImages() (active theme → Branding upload → default). `size`: sidebar /
+ * top bar ("md") or sign-in screens ("lg").
  */
 export function BrandLockup({ name, logo, logoWide, size = "md", nameClassName }: {
   name: string; logo: string | null; logoWide: string | null; size?: "md" | "lg"; nameClassName?: string;
 }) {
   if (logoWide) {
     return (
-      // eslint-disable-next-line @next/next/no-img-element -- small image from our own route
-      <img src={`/brand/wordmark?v=${logoWide}`} alt={name}
+      // eslint-disable-next-line @next/next/no-img-element -- small image from our own routes
+      <img src={logoWide} alt={name}
         className={cn("w-auto max-w-full object-contain object-left", size === "lg" ? "h-12 max-w-72" : "h-10 max-w-48")} />
     );
   }
@@ -27,8 +28,8 @@ export function BrandLockup({ name, logo, logoWide, size = "md", nameClassName }
   );
 }
 
+/** The square icon (`logo` is its URL), or the default Yoink icon. Shown exactly as designed. */
 export function BrandMark({ logo, className }: { logo: string | null; className?: string }) {
-  const src = logo ? `/brand/logo?v=${logo}` : "/brand-default.png";
   // eslint-disable-next-line @next/next/no-img-element -- tiny, already-sized image
-  return <img src={src} alt="" className={cn("shrink-0 object-contain", className)} />;
+  return <img src={logo ?? "/brand-default.png"} alt="" className={cn("shrink-0 object-contain", className)} />;
 }

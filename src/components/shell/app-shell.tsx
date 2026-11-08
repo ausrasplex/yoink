@@ -1,4 +1,5 @@
 import type { Role } from "@/lib/format";
+import { listNotifications } from "@/lib/notifications";
 import { getShellInfo } from "@/lib/user-data";
 import { MobileNav, SidebarNav } from "./nav";
 import { Brand, TopBar } from "./topbar";
@@ -6,7 +7,10 @@ import { Brand, TopBar } from "./topbar";
 type ShellUser = { id: string; name: string; email: string; role: Role; avatar?: string | null };
 
 export async function AppShell({ user, children }: { user: ShellUser; children: React.ReactNode }) {
-  const info = await getShellInfo(user.id);
+  const [info, notifications] = await Promise.all([
+    getShellInfo(user.id),
+    user.role === "SERVER_ADMIN" ? null : listNotifications(user.id), // the server admin doesn't bid
+  ]);
   return (
     // Full-width frame: the sidebar sits on the left edge; the top bar and page share one centred content container.
     <div className="min-h-dvh w-full lg:flex">
@@ -18,7 +22,7 @@ export async function AppShell({ user, children }: { user: ShellUser; children: 
           (a wider page also drags the fixed bottom nav off-screen) */}
       <div className="min-w-0 flex-1 overflow-x-clip">
         <div className="mx-auto w-full max-w-7xl">
-          <TopBar brand={info.name} logo={info.logo} logoWide={info.logoWide} name={user.name} email={user.email} avatar={user.avatar ?? null} role={user.role} alert={info.outbid > 0} />
+          <TopBar brand={info.name} logo={info.logo} logoWide={info.logoWide} name={user.name} email={user.email} avatar={user.avatar ?? null} role={user.role} notifications={notifications} />
           <main className="px-4 pb-28 pt-2 lg:px-10 lg:pb-12">{children}</main>
         </div>
       </div>

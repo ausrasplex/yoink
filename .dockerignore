@@ -8,4 +8,6 @@ tests
 unraid
 assets
 *.md
+!themes/THEMES.md
+!themes/AI-THEME-GUIDE.md
 docker-compose.yml

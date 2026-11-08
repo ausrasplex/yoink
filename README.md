@@ -96,8 +96,11 @@ can look around (**replaces** items, bids and user accounts, so never run it on 
   (valid 1 hour, only its hash is stored, newest link replaces older ones). The screen reads the same whether or not the
   address has an account, and requests are limited to 3 per 15 minutes per email. Using the link signs the user out everywhere
   else. Needs `APP_URL` set so the link points at the right address.
-- **Server → Theme:** (server admin) *Yoink* (original) or *Britney* ("Oops!… I did it again"). Sets `data-theme` on `<html>` and
-  selects wording from `src/lib/themes.ts`; Britney's own wording and styling are still to be written.
+- **Server → Themes:** (server admin) seasonal themes: colours, images, a font, an effect (snow, leaves, bats, confetti) and
+  fancy wording for bids, alerts and emails. *Automatic* switches them on by date each year, or pick one to always show.
+  Preview (your browser only), install from a `.zip`, download, delete. Built in: Christmas, Halloween, Autumn, Britney.
+  Theme authors: see [themes/THEMES.md](themes/THEMES.md); to have ChatGPT/Claude make one, paste in
+  [themes/AI-THEME-GUIDE.md](themes/AI-THEME-GUIDE.md) (both are inside the Starter template download).
 - **Profile pictures:** everyone (user, admin, server admin) can add one under **Settings → Profile** (JPEG, PNG or WebP, up to
   5 MB; no SVG). Shown instead of initials in the top bar, Users/Admins lists and bid history.
 - **Server → Branding:** (server admin) app name (falls back to the auction name) and logo (SVG, PNG, JPEG or WebP), shown in the sidebar,

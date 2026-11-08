@@ -1,0 +1,56 @@
+{
+  "name": "Britney",
+  "description": "Oops!… I did it again: pop-princess wording and confetti. No dates: choose it to switch it on.",
+  "colours": {
+    "ink": "#3d1d4a",
+    "lilac": "#c8a6ff",
+    "peach": "#ffd1e8",
+    "lime": "#ff6fb5",
+    "canvas": "#faf3f8"
+  },
+  "font": {
+    "file": "heading.woff2",
+    "use": "headings"
+  },
+  "effect": "confetti",
+  "copy": {
+    "welcomeBack": [
+      "Oops!… {first} did it again: welcome back! 💖",
+      "Welcome back, {first}, you're so Lucky!"
+    ],
+    "signInHeadline": "Oops!… I bid it again.",
+    "signInTagline": "Scan a tag, place your bid, and we'll tell you the moment it gets Toxic.",
+    "placeBid": "Bid (one more time)",
+    "bidPlaced": [
+      "Oops!… you bid {amount} again!",
+      "{amount} bid placed, you're Stronger than yesterday!"
+    ],
+    "bidDialogTitle": [
+      "Oops!… you did it again! 💖",
+      "You're Stronger than the rest, {first}!"
+    ],
+    "bidDialogBody": "You're the top bidder on Lot {lot} ({title}). If someone does it again, you'll be the first to know.",
+    "bidDialogButton": "Lucky me!",
+    "leadingTitle": "You're Stronger than the rest: top bid!",
+    "leadingBody": "If anyone else does it again, you'll hear from us.",
+    "outbidTitle": [
+      "Oops!… they did it again!",
+      "Things just got Toxic: you've been outbid!"
+    ],
+    "outbidBody": "Bid one more time to take the lead.",
+    "endedTitle": "The Circus has left town: bidding's closed",
+    "wonBody": "Lucky you: it's yours! 💖",
+    "lostBody": "Not this time, but thanks for joining the Circus!",
+    "outbidEmailSubject": "Oops!… you've been outbid on Lot {lot}",
+    "outbidEmailBody": "Someone just bid {amount} on Lot {lot} ({title}). Bid {minBid} or more, one more time, to win it back.",
+    "digestEmailSubject": "💖 {items} just dropped at {auction}",
+    "digestEmailIntro": "Brand new since our last update (you'll want these, every time):",
+    "notifyOutbid": "Oops!… someone outbid you on Lot {lot}: {title}",
+    "notifyWon": "💖 Lucky you: Lot {lot} ({title}) is yours!",
+    "notifyLost": "Lot {lot} ({title}) said Sometimes… to someone else",
+    "notifyEmpty": "Nothing new… yet!",
+    "notifyEndingSoon": "⏰ Lot {lot} ({title}) ends within the hour, so don't be Toxic, bid!",
+    "notifyNewItem": "💖 Brand new: Lot {lot}: {title}",
+    "notifyNewItems": "💖 {count} new items just dropped"
+  }
+}

@@ -4,6 +4,7 @@ import { getAuction } from "@/lib/auction";
 import { decrypt } from "@/lib/crypto";
 import { db } from "@/lib/db";
 import { brandName, money } from "@/lib/format";
+import { themeCopy } from "@/lib/theme/active";
 
 /**
  * Who decides what gets sent:
@@ -69,6 +70,7 @@ export async function sendTestEmail(to: string): Promise<{ ok: true } | { ok: fa
 export async function sendOutbidEmail(p: { userId: string; lot: number; title: string; amount: number; minBid: number; endsAt: Date }) {
   try {
     const t = await transportFromSettings("outbid");
+    const say = await themeCopy();
     if (!t) return;
     const user = await db.user.findUnique({ where: { id: p.userId }, select: { name: true, email: true } });
     if (!user) return;
@@ -78,10 +80,10 @@ export async function sendOutbidEmail(p: { userId: string; lot: number; title: s
     await t.transport.sendMail({
       from: t.from,
       to: user.email,
-      subject: `You've been outbid on Lot ${p.lot}: ${p.title}`,
+      subject: say("outbidEmailSubject", { lot: p.lot, title: p.title, amount: money(p.amount), minBid: money(p.minBid), name: user.name }),
       text:
         `Hi ${user.name},\n\n` +
-        `Someone has bid ${money(p.amount)} on Lot ${p.lot} (${p.title}), so you're no longer the highest bidder.\n` +
+        `${say("outbidEmailBody", { lot: p.lot, title: p.title, amount: money(p.amount), minBid: money(p.minBid), name: user.name })}\n` +
         `To take the lead again you'll need to bid at least ${money(p.minBid)}.\n${ends}\n` +
         `${link}\n\n${t.auction.name}`,
     });
@@ -151,6 +153,7 @@ export type DigestItem = { lot: number; title: string; price: number; noBids: bo
  */
 export async function sendNewItemsDigest(items: DigestItem[]): Promise<number> {
   const t = await transportFromSettings("newItems");
+  const say = await themeCopy();
   if (!t || items.length === 0) return 0;
   const recipients = await db.user.findMany({ where: { role: "USER", emailDigest: true }, select: { name: true, email: true } });
   const base = (process.env.APP_URL ?? "").replace(/\/$/, "");
@@ -171,10 +174,10 @@ export async function sendNewItemsDigest(items: DigestItem[]): Promise<number> {
       await t.transport.sendMail({
         from: t.from,
         to: r.email,
-        subject: `${items.length} new item${items.length === 1 ? "" : "s"} in ${t.auction.name}`,
+        subject: say("digestEmailSubject", { items: `${items.length} new item${items.length === 1 ? "" : "s"}`, count: items.length, auction: t.auction.name, name: r.name }),
         text: [
           `Hi ${r.name},`, "",
-          "Here's what's been added since the last update:", "",
+          say("digestEmailIntro", { count: items.length, name: r.name }), "",
           list, "",
           `Don't want these? Turn off the daily email in your settings: ${base}/settings`, "",
           app,

@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, LogOut, Search } from "lucide-react";
+import { LogOut, Search } from "lucide-react";
 import { BrandLockup } from "@/components/brand-mark";
+import { NotificationBell } from "@/components/shell/notification-bell";
+import type { NotificationRow } from "@/lib/notifications";
 import { UserAvatar } from "@/components/user-avatar";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -19,7 +21,8 @@ export function Brand({ name, logo, logoWide }: { name: string; logo: string | n
 }
 
 export function TopBar(p: {
-  brand: string; logo: string | null; logoWide: string | null; name: string; email: string; avatar: string | null; role: Role; alert: boolean;
+  brand: string; logo: string | null; logoWide: string | null; name: string; email: string; avatar: string | null; role: Role;
+  notifications: { unread: number; items: NotificationRow[] } | null; // bidders only
 }) {
   const bidder = p.role !== "SERVER_ADMIN"; // the server admin has no items to search or bids to watch
   return (
@@ -40,14 +43,7 @@ export function TopBar(p: {
         <Link href="/items" aria-label="Search" className="grid size-10 place-items-center rounded-full bg-white sm:hidden">
           <Search className="size-[18px]" />
         </Link>
-        <Link
-          href="/bids"
-          aria-label={p.alert ? "You have been outbid" : "My bids"}
-          className="relative grid size-10 place-items-center rounded-full bg-white transition-colors hover:bg-white/70"
-        >
-          <Bell className="size-[18px]" />
-          {p.alert && <span className="absolute right-2.5 top-2.5 size-2.5 rounded-full bg-destructive ring-2 ring-white" />}
-        </Link>
+        {p.notifications && <NotificationBell initial={p.notifications} />}
         </>}
         <DropdownMenu>
           <DropdownMenuTrigger className="rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50" aria-label="Account menu">

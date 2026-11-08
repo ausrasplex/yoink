@@ -29,17 +29,30 @@ await AD.goto(B + "/admin"); ok(new URL(AD.url()).pathname === "/admin", "Admin 
 // ---------- bidding + outbid alert on the new UI ----------
 await A.goto(B + "/lot/4");
 await A.getByRole("button", { name: "Place bid" }).click();
+await A.getByRole("dialog", { name: "Nice bid!" }).waitFor();
+ok(await A.getByRole("dialog").getByText(/highest bidder on Lot 4/).isVisible(), "Bid dialog confirms you're the highest bidder");
+await A.getByRole("button", { name: "Got it" }).click();
+await A.getByRole("dialog").waitFor({ state: "hidden" });
 await A.getByText("You're the highest bidder").waitFor();
 ok(true, "User places the minimum bid and leads");
 const jordan = await mk(); await login(jordan.page, "jordan@example.com", "demo-password-1"); await jordan.page.waitForURL(B + "/");
 await jordan.page.goto(B + "/lot/4");
 await jordan.page.getByLabel(/Your bid/).fill("50"); await jordan.page.getByRole("button", { name: "Place bid" }).click();
+await jordan.page.getByRole("button", { name: "Got it" }).click();
 await jordan.page.getByText("You're the highest bidder").waitFor();
 await A.getByText("You've been outbid").waitFor({ timeout: 8000 });
 ok(true, "Alyssa's open page flips to Outbid within the poll interval");
 await A.goto(B + "/bids");
 ok(await A.getByRole("link", { name: /Craft beer hamper/ }).getByText("Outbid").isVisible(), "My bids lists the item as Outbid");
-ok(await A.getByRole("link", { name: "You have been outbid" }).isVisible(), "Bell shows the outbid alert");
+const bell = A.getByRole("button", { name: /Notifications: d+ unread/ });
+await bell.waitFor();
+ok(true, "Bell shows an unread count after being outbid");
+await bell.click();
+const note = A.getByRole("menuitem", { name: /outbid on Lot 4/ });
+await note.waitFor();
+ok(true, "Bell lists the outbid notification");
+await note.click(); await A.waitForURL(B + "/lot/4");
+ok(true, "Clicking the notification opens the item");
 
 // ---------- search & filters ----------
 await A.goto(B + "/items?q=guitar");

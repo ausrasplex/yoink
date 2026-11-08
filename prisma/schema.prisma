@@ -30,6 +30,7 @@ model User {
   passwordResets     PasswordReset[]
   invitesSent        Invite[]        @relation("InvitesSent")
   bidArchives        BidArchive[]
+  notifications      Notification[]
 }
 
 model Session {
@@ -57,7 +58,7 @@ model Auction {
   appLogo     String? // square icon: tab icon, compact spots
   appLogoWide String? // landscape logo: replaces icon + name in the sidebar, top bar and sign-in screens
   appSlogan   String? // short tagline shown under the name (sign-in screens, page description)
-  theme       String  @default("yoink") // "yoink" | "britney" — see src/lib/themes.ts
+  theme       String  @default("auto") // "auto" (by each theme's dates) or a theme id to always show — see src/lib/theme
 
   registrationOpen Boolean @default(true)
   terms            String  @default("")
@@ -108,10 +109,13 @@ model Item {
   bidArchives  BidArchive[]
 
   // Each item is its own listing with its own bidding window (UTC). Admins set both; see src/lib/listing.ts.
-  startsAt         DateTime
-  endsAt           DateTime
-  hiddenUntilStart Boolean   @default(false) // true: Users can't see it before startsAt; false: shows "Starts in…"
-  claimedAt        DateTime? // set by the winner ("Claimed" on My Bids) once they've collected it
+  startsAt             DateTime
+  endsAt               DateTime
+  hiddenUntilStart     Boolean   @default(false) // true: Users can't see it before startsAt; false: shows "Starts in…"
+  claimedAt            DateTime? // set by the winner ("Claimed" on My Bids) once they've collected it
+  endNotifiedAt        DateTime? // when Won / Didn't win notifications were created for this listing (once)
+  endingSoonNotifiedAt DateTime? // when "ends within the hour" notifications went out (once)
+  announcedAt          DateTime? // when "new item" notifications went out (once, when it became visible to Users)
 
   @@index([endsAt])
 }
@@ -174,4 +178,20 @@ model BidArchive {
 
   @@id([userId, itemId])
   @@index([itemId])
+}
+
+// Bell notifications. Stored as a type + details; the wording comes from the active theme when shown.
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String // "outbid" | "won" | "lost" | "endingSoon" | "newItems"
+  lot       Int? // the item it's about (null for a roll-up like "3 new items")
+  count     Int? // how many items a roll-up covers
+  title     String // the item's title at the time
+  amount    Int? // the bid that triggered it, whole dollars
+  createdAt DateTime  @default(now())
+  readAt    DateTime?
+
+  @@index([userId, createdAt])
 }

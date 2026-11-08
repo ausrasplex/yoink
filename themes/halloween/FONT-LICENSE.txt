@@ -1,0 +1,2 @@
+heading.woff2 is "Creepster" from Google Fonts (https://fonts.google.com),
+licensed under the SIL Open Font License 1.1: https://openfontlicense.org

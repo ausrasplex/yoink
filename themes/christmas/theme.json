@@ -1,0 +1,61 @@
+{
+  "name": "Christmas",
+  "description": "Snow, festive colours and a little Christmas cheer in every bid.",
+  "active": {
+    "from": "12-01",
+    "to": "12-26"
+  },
+  "colours": {
+    "ink": "#1d3b2c",
+    "lilac": "#f2a7a3",
+    "peach": "#fde4dc",
+    "lime": "#f4c94a",
+    "canvas": "#f4f1ea"
+  },
+  "font": {
+    "file": "heading.woff2",
+    "use": "headings"
+  },
+  "effect": "snow",
+  "copy": {
+    "welcomeBack": [
+      "Merry bidding, {first}! 🎄",
+      "Welcome back, {first}, the elves have been busy!",
+      "Ho ho ho, {first}!"
+    ],
+    "signInHeadline": "Unwrap something wonderful.",
+    "signInTagline": "Scan a tag, place your bid, and find out if it's under your tree.",
+    "placeBid": "Bid for it 🎁",
+    "bidPlaced": [
+      "Your {amount} bid is on the nice list!",
+      "Ho ho! {amount} bid placed."
+    ],
+    "bidDialogTitle": [
+      "You're top of the nice list! 🎄",
+      "Ho ho ho, {first}!"
+    ],
+    "bidDialogBody": "Lot {lot} ({title}) is heading for your stocking. We'll ring the sleigh bells if anyone tries to sneak past.",
+    "bidDialogButton": "Jolly good!",
+    "leadingTitle": "You're top of the nice list!",
+    "leadingBody": "If someone tries to sneak past, we'll let you know.",
+    "outbidTitle": [
+      "Someone snuck down the chimney: you've been outbid!",
+      "A rival elf just outbid you!"
+    ],
+    "outbidBody": "Bid again to put this one back under your tree.",
+    "endedTitle": "Sleigh bells have rung: bidding's closed",
+    "wonBody": "It's yours! Merry Christmas! 🎄",
+    "lostBody": "Not under your tree this year, but thanks for bidding!",
+    "outbidEmailSubject": "🎄 Lot {lot} slipped down someone else's chimney",
+    "outbidEmailBody": "Someone has bid {amount} on Lot {lot} ({title}) and nudged you off the top of the nice list. Bid at least {minBid} to win it back.",
+    "digestEmailSubject": "🎁 {items} under the tree at {auction}",
+    "digestEmailIntro": "Fresh from the workshop since our last update:",
+    "notifyOutbid": "🎅 Someone snuck down the chimney on Lot {lot}: {title}",
+    "notifyWon": "🎁 Lot {lot} is under your tree: {title}!",
+    "notifyLost": "Lot {lot} ({title}) went to another stocking",
+    "notifyEmpty": "All quiet on the North Pole.",
+    "notifyEndingSoon": "⏰ Last call before Santa leaves: Lot {lot} ({title}) ends within the hour",
+    "notifyNewItem": "🎁 Fresh from the workshop: Lot {lot}: {title}",
+    "notifyNewItems": "🎁 {count} new presents under the tree"
+  }
+}

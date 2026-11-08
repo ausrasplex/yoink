@@ -1,0 +1,677 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ausrasplex/yoink/blob/main/themes/theme.schema.json",
+  "title": "Yoink theme (theme.json)",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 60
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "active": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string",
+          "pattern": "^(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$"
+        },
+        "to": {
+          "type": "string",
+          "pattern": "^(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$"
+        }
+      },
+      "required": [
+        "from",
+        "to"
+      ]
+    },
+    "colours": {
+      "type": "object",
+      "properties": {
+        "ink": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "lilac": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "peach": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "lime": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "canvas": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        }
+      }
+    },
+    "images": {
+      "type": "object",
+      "properties": {
+        "icon": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}\\.(png|jpe?g|webp|svg|woff2?|ttf|otf)$"
+        },
+        "logo": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}\\.(png|jpe?g|webp|svg|woff2?|ttf|otf)$"
+        },
+        "background": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}\\.(png|jpe?g|webp|svg|woff2?|ttf|otf)$"
+        }
+      }
+    },
+    "font": {
+      "type": "object",
+      "properties": {
+        "file": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}\\.(png|jpe?g|webp|svg|woff2?|ttf|otf)$"
+        },
+        "use": {
+          "default": "headings",
+          "type": "string",
+          "enum": [
+            "headings",
+            "all"
+          ]
+        }
+      },
+      "required": [
+        "file"
+      ]
+    },
+    "effect": {
+      "default": "none",
+      "type": "string",
+      "enum": [
+        "none",
+        "snow",
+        "leaves",
+        "bats",
+        "confetti"
+      ]
+    },
+    "copy": {
+      "type": "object",
+      "description": "Wording. Each key: one string, or a list of 1-20 options (one is picked per day). Unknown keys are rejected.",
+      "properties": {
+        "welcomeBack": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: Hi, {first}!"
+        },
+        "signInHeadline": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: Scan it. Love it. Bid on it."
+        },
+        "signInTagline": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: Browse every item, place a bid in seconds, and get told the moment someone outbids you."
+        },
+        "placeBid": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: Place bid"
+        },
+        "bidPlaced": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: Bid of {amount} placed"
+        },
+        "bidDialogTitle": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: Nice bid!"
+        },
+        "bidDialogBody": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: You're now the highest bidder on Lot {lot}: {title}. We'll let you know if someone outbids you."
+        },
+        "bidDialogButton": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: Got it"
+        },
+        "leadingTitle": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: You're the highest bidder"
+        },
+        "leadingBody": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: We'll email you if someone outbids you."
+        },
+        "outbidTitle": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: You've been outbid"
+        },
+        "outbidBody": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: Place a higher bid to take the lead."
+        },
+        "endedTitle": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: Bidding has ended"
+        },
+        "wonBody": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: Congratulations, you won this item!"
+        },
+        "lostBody": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: Someone else won this one. Thanks for bidding."
+        },
+        "notifyHeading": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: Notifications"
+        },
+        "notifyOutbid": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: You were outbid on Lot {lot}: {title}"
+        },
+        "notifyWon": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: You won Lot {lot}: {title}!"
+        },
+        "notifyLost": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: Lot {lot} ended: {title} went to another bidder"
+        },
+        "notifyEndingSoon": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: Lot {lot} ends within the hour: {title}"
+        },
+        "notifyNewItem": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: New: Lot {lot}: {title}"
+        },
+        "notifyNewItems": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: {count} new items just added"
+        },
+        "notifyEmpty": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: You're all caught up."
+        },
+        "notifyMarkAll": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: Mark all as read"
+        },
+        "outbidEmailSubject": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: You've been outbid on Lot {lot}: {title}"
+        },
+        "outbidEmailBody": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: Someone has bid {amount} on Lot {lot} ({title}), so you're no longer the highest bidder."
+        },
+        "digestEmailSubject": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: {items} in {auction}"
+        },
+        "digestEmailIntro": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          ],
+          "description": "Default: Here's what's been added since the last update:"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

@@ -30,10 +30,12 @@ RUN v=$(node -p "require('./package-lock.json').packages['node_modules/prisma'].
 
 FROM base AS run
 WORKDIR /app
-ENV NODE_ENV=production PORT=3000 HOSTNAME=0.0.0.0 UPLOAD_DIR=/data/uploads NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production PORT=3000 HOSTNAME=0.0.0.0 UPLOAD_DIR=/data/uploads NEXT_TELEMETRY_DISABLED=1     BUILTIN_THEMES_DIR=/app/themes THEMES_DIR=/data/themes
 COPY --from=build /app/.next/standalone ./
 COPY --from=build /app/.next/static ./.next/static
 COPY --from=build /app/public ./public
+# Built-in themes (installed ones go in /data/themes, on the App data volume).
+COPY --from=build /app/themes ./themes
 # The generated Prisma client + its query engine (copied explicitly so the standalone trace can never miss the engine).
 COPY --from=build /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=build /app/prisma/schema.prisma ./prisma/schema.prisma

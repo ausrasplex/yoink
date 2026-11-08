@@ -66,7 +66,7 @@ export default async function LotPage({ params }: { params: Promise<{ lot: strin
             </div>
             <h1 className="mt-3 text-3xl font-extrabold leading-tight tracking-tight text-ink">{item.title}</h1>
           </div>
-          <BidPanel lot={item.lot} initial={status} startingBid={item.startingBid} increment={item.minIncrement} />
+          <BidPanel lot={item.lot} title={item.title} first={user.name.split(" ")[0]} initial={status} startingBid={item.startingBid} increment={item.minIncrement} />
           {item.description && (
             <section className="rounded-3xl bg-white p-5">
               <h2 className="mb-2 text-sm font-extrabold text-ink">About this item</h2>

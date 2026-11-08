@@ -1,12 +1,13 @@
 import { headers } from "next/headers";
 import { ChartColumn, CircleCheck, CircleAlert, Mail, Palette, Server, Sparkles } from "lucide-react";
-import { BrandingForm, SmtpForm, ThemeForm } from "@/components/server/server-forms";
+import { BrandingForm, SmtpForm } from "@/components/server/server-forms";
+import { ThemeManager, type ThemeCard } from "@/components/server/theme-manager";
 import { SectionCard } from "@/components/section-card";
 import { AppShell, PageTitle } from "@/components/shell/app-shell";
 import { getAuction } from "@/lib/auction";
 import { requireServerAdmin } from "@/lib/auth";
 import { bytes } from "@/lib/format";
-import { themeOf } from "@/lib/themes";
+import { listThemes, pickTheme } from "@/lib/theme/store";
 import { appUrlMismatch } from "@/lib/qr";
 import { getUsage } from "@/lib/usage";
 
@@ -39,6 +40,15 @@ function EnvRow({ name, ok, value, hint }: { name: string; ok: boolean; value: s
 export default async function ServerSettingsPage() {
   const user = await requireServerAdmin();
   const [a, usage] = await Promise.all([getAuction(), getUsage()]);
+  const showing = pickTheme(a.theme, null);
+  const md = (v: string) => new Date(2000, Number(v.slice(0, 2)) - 1, Number(v.slice(3))).toLocaleDateString("en-AU", { day: "numeric", month: "short" });
+  const themeCards: ThemeCard[] = listThemes().map((t) => t.ok
+    ? {
+        id: t.id, name: t.theme.name, description: t.theme.description, source: t.source, replacesBuiltIn: t.replacesBuiltIn, ok: true,
+        dates: t.theme.active && `${md(t.theme.active.from)} – ${md(t.theme.active.to)} each year`,
+        effect: t.theme.effect, font: !!t.theme.font, swatches: Object.values(t.theme.colours ?? {}),
+      }
+    : { id: t.id, name: t.id, source: t.source, replacesBuiltIn: t.replacesBuiltIn, ok: false, error: t.error, effect: "none", font: false, swatches: [] });
   const env = process.env;
   const mismatch = appUrlMismatch(await headers());
   const secretOk = !!env.APP_SECRET && env.APP_SECRET.length >= 16;
@@ -59,8 +69,12 @@ export default async function ServerSettingsPage() {
             />
           </div>
         </SectionCard>
-        <BrandingForm head={{ icon: <Palette className="size-5" />, title: "Branding" }} appName={a.appName} appSlogan={a.appSlogan} auctionName={a.name} logo={a.appLogo} logoWide={a.appLogoWide} />
-        <ThemeForm head={{ icon: <Sparkles className="size-5" />, title: "Theme", desc: "Changes the app's wording (and later its look) for everyone." }} theme={themeOf(a.theme)} />
+        <BrandingForm head={{ icon: <Palette className="size-5" />, title: "Branding" }} appName={a.appName} appSlogan={a.appSlogan} auctionName={a.name} logo={a.appLogo ? `/brand/logo?v=${a.appLogo}` : null} logoWide={a.appLogoWide ? `/brand/wordmark?v=${a.appLogoWide}` : null} />
+        <SectionCard icon={<Sparkles className="size-5" />} title="Themes"
+          desc="Seasonal looks and wording for everyone: colours, images, a font, an effect and fancy text for bids and emails. Preview only changes your own browser.">
+          <ThemeManager themes={themeCards} mode={a.theme} showingId={showing.id}
+            reason={a.theme !== "auto" ? "chosen to always show" : showing.theme.active ? "its dates include today" : "no dated theme today"} />
+        </SectionCard>
         <SmtpForm
             head={{
               icon: <Mail className="size-5" />,

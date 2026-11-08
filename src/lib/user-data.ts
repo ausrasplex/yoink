@@ -1,6 +1,7 @@
 import "server-only";
 import { db } from "@/lib/db";
 import { getAuction } from "@/lib/auction";
+import { brandImages } from "@/lib/brand";
 import { brandName } from "@/lib/format";
 import { phaseOf, type Phase } from "@/lib/listing";
 
@@ -54,5 +55,5 @@ export async function getShellInfo(userId: string) {
     // only listings still open: nothing can be done about an ended one
     db.item.count({ where: { bids: { some: { userId } }, NOT: { highBidderId: userId }, endsAt: { gt: new Date() } } }),
   ]);
-  return { name: brandName(auction), logo: auction.appLogo, logoWide: auction.appLogoWide, outbid };
+  return { name: brandName(auction), ...(await brandImages(auction)), outbid };
 }

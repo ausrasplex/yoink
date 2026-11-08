@@ -11,8 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FileInput } from "@/components/ui/file-input";
 import { Label } from "@/components/ui/label";
-import { removeAppLogoAction, removeAppLogoWideAction, saveBrandingAction, saveSmtpAction, saveThemeAction, testEmailAction, type SettingsState } from "@/app/server/actions";
-import { THEMES, type ThemeId } from "@/lib/themes";
+import { removeAppLogoAction, removeAppLogoWideAction, saveBrandingAction, saveSmtpAction, testEmailAction, type SettingsState } from "@/app/server/actions";
 
 const IMAGE_TYPES = "image/svg+xml,.svg,.svgz,image/png,image/jpeg,image/webp";
 
@@ -64,7 +63,7 @@ export function BrandingForm({ head, appName, appSlogan, auctionName, logo, logo
           <div className="relative grid h-14 w-40 place-items-center rounded-xl border border-dashed border-border bg-canvas px-2">
             {logoWide ? (
               // eslint-disable-next-line @next/next/no-img-element -- small preview from our own route
-              <img src={`/brand/wordmark?v=${logoWide}`} alt="Landscape logo" className="max-h-11 max-w-full object-contain" />
+              <img src={logoWide} alt="Landscape logo" className="max-h-11 max-w-full object-contain" />
             ) : (
               <span className="text-xs text-muted-foreground">No landscape logo</span>
             )}
@@ -146,28 +145,3 @@ export function SmtpForm({ head, ...p }: Smtp & { head: SectionHead }) {
   );
 }
 
-export function ThemeForm({ head, theme }: { head: SectionHead; theme: ThemeId }) {
-  const [state, action, pending] = useActionState(saveThemeAction, undefined);
-  const id = useId();
-  const a = { form: id, pending, status: <Status state={state} /> };
-  return (
-    <SectionCard {...head} action={<FormActions where="header" {...a} />}>
-    <form id={id} action={action} className="space-y-4">
-      <fieldset className="grid gap-3 sm:grid-cols-2">
-        <legend className="sr-only">Theme</legend>
-        {(Object.entries(THEMES) as [ThemeId, (typeof THEMES)[ThemeId]][]).map(([value, t]) => (
-          <label key={value}
-            className="flex cursor-pointer items-start gap-3 rounded-2xl border border-border p-4 has-[:checked]:border-ink has-[:checked]:bg-lilac/30">
-            <input type="radio" name="theme" value={value} defaultChecked={value === theme} className="mt-1 size-4 accent-ink" />
-            <span className="min-w-0">
-              <span className="block font-bold text-ink">{t.label}</span>
-              <span className="block text-sm text-muted-foreground">{t.description}</span>
-            </span>
-          </label>
-        ))}
-      </fieldset>
-      <FormActions where="footer" {...a} />
-    </form>
-    </SectionCard>
-  );
-}

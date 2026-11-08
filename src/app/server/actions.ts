@@ -6,7 +6,6 @@ import { requireServerAdmin } from "@/lib/auth";
 import { encrypt } from "@/lib/crypto";
 import { db } from "@/lib/db";
 import { sendTestEmail } from "@/lib/mail";
-import { isThemeId } from "@/lib/themes";
 import { deleteImageFile, saveLogo } from "@/lib/uploads";
 
 // Server admin only: settings that keep the app running (branding, email), not auction content.
@@ -91,14 +90,6 @@ export async function saveBrandingAction(_: SettingsState, form: FormData): Prom
   return { saved: true };
 }
 
-/** Server admin: the app theme (wording now, styling later — see src/lib/themes.ts). */
-export async function saveThemeAction(_: SettingsState, form: FormData): Promise<SettingsState> {
-  await requireServerAdmin();
-  const theme = form.get("theme");
-  if (!isThemeId(theme)) return { error: "Pick a theme." };
-  await update({ theme });
-  return { saved: true };
-}
 
 /** Server admin: remove the app logo (the bin button on the Branding logo). */
 export async function removeAppLogoAction(): Promise<void> {

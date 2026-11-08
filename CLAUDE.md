@@ -44,7 +44,9 @@ src/lib/           server-only helpers
   crypto.ts        AES-256-GCM for the SMTP password (key from APP_SECRET)
   mail.ts          SMTP: test, outbid, password-reset, admin-invite emails
   uploads.ts       saveImage (photos: raster only) / saveLogo (raster or SVG), PHOTO_NAME / LOGO_NAME patterns
-  themes.ts        theme registry + copy(theme, key) wording lookup (Server → Theme; <html data-theme>)
+  theme/           themes: copy.ts (wording keys + defaults, client-safe), schema.ts (theme.json rules), store.ts (folders:
+                   built-in themes/ + installed THEMES_DIR, active theme, zip install/export), active.ts (per-request theme,
+                   CSS, pageCopy/themeCopy). Guide for authors: themes/THEMES.md
   usage.ts         server-admin usage totals (counts, uploads folder size, pg_database_size)
   svg.ts           SVG repair + allow-list rebuild for logos (xmldom parse, own serialiser) — checks: npm run test:unit
   qr.ts            qrBase(headers) → APP_URL or request origin; logoDataUri() inlines the QR logo
@@ -110,7 +112,16 @@ Money is **whole dollars** (Int).
 - **Docker image** is slim: Next standalone output + static + public + migrations + a standalone Prisma CLI
   (`/opt/prisma-cli`, pinned to package-lock) that runs `migrate deploy` on start. No seed, no full node_modules. Anything
   that must run at container start has to work with only those. CI builds linux/amd64 only.
-- **Background job:** `src/instrumentation.ts` runs the daily digest check (`src/lib/digest.ts`) every 5 min; it's idempotent.
+- **Themes / wording:** user-facing text that a theme might change goes through a key in `src/lib/theme/copy.ts`
+  (server: `pageCopy()` / `themeCopy()` for emails; client: `useCopy()`). Add the key to themes/THEMES.md too. Themes are
+  data only (no scripts/CSS); colours override `--ink`/`--lime`/… at :root, so use those tokens, not hard-coded colours.
+  Brand images go through `brandImages()` (theme → Branding upload → default).
+- **Background job:** `src/instrumentation.ts` runs every 5 min: notifications (Won / Didn't win, ending within the hour,
+  new items — each listing claimed once via endNotifiedAt / endingSoonNotifiedAt / announcedAt) and the
+  daily digest (both idempotent, claim-then-act), plus hourly notification pruning.
+- **Notifications:** `src/lib/notifications.ts` stores type + details (lot, title, amount); wording comes from the theme
+  (`notify*` copy keys) when shown, in the header bell (`notification-bell.tsx`, polls `/api/notifications`). Add a type by
+  creating it where the event happens, adding a `notify…` key, and an entry in the bell's KIND map.
 - **Section cards:** use `SectionCard` (`src/components/section-card.tsx`). A section's main form button goes right of the heading
   on desktop and at the end of the form below `lg`: the form component renders the card itself and puts
   `<FormActions where="header">` in `action` and `<FormActions where="footer">` in the form (same `form={useId()}` id).

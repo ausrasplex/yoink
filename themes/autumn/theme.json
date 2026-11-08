@@ -1,0 +1,44 @@
+{
+  "name": "Autumn",
+  "description": "Falling leaves and warm autumn colours (March to May).",
+  "active": {
+    "from": "03-01",
+    "to": "05-31"
+  },
+  "colours": {
+    "ink": "#3b2416",
+    "lilac": "#d9a07a",
+    "peach": "#f6d8b8",
+    "lime": "#e8a33d",
+    "canvas": "#f6f1ea"
+  },
+  "font": {
+    "file": "heading.woff2",
+    "use": "headings"
+  },
+  "effect": "leaves",
+  "copy": {
+    "welcomeBack": [
+      "Welcome back, {first} 🍂",
+      "Cosy bidding, {first}!"
+    ],
+    "signInHeadline": "Fall for something new.",
+    "placeBid": "Place bid 🍂",
+    "bidPlaced": "{amount} bid placed, nice and toasty.",
+    "bidDialogTitle": "You're on top of the pile! 🍂",
+    "bidDialogBody": "Lot {lot} ({title}) is yours for now. We'll let you know if the wind changes.",
+    "bidDialogButton": "Lovely",
+    "leadingTitle": "You're on top of the pile!",
+    "outbidTitle": "The wind changed: you've been outbid!",
+    "outbidBody": "Rake it back in with a higher bid.",
+    "wonBody": "It's yours! Enjoy your autumn treasure. 🍁",
+    "outbidEmailSubject": "🍂 You've been outbid on Lot {lot}: {title}",
+    "digestEmailSubject": "🍁 {items} fresh this season at {auction}",
+    "notifyOutbid": "🍂 The wind changed on Lot {lot}: {title}",
+    "notifyWon": "🍁 You won Lot {lot}: {title}!",
+    "notifyEmpty": "All raked up.",
+    "notifyEndingSoon": "🍂 Lot {lot} ({title}) is falling fast: ends within the hour",
+    "notifyNewItem": "🍁 Freshly fallen: Lot {lot}: {title}",
+    "notifyNewItems": "🍁 {count} new items just landed"
+  }
+}

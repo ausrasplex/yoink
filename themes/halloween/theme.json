@@ -1,0 +1,61 @@
+{
+  "name": "Halloween",
+  "description": "Bats, pumpkin colours and spooky wording.",
+  "active": {
+    "from": "10-20",
+    "to": "11-01"
+  },
+  "colours": {
+    "ink": "#2b1a3d",
+    "lilac": "#b48ce0",
+    "peach": "#ffd5a8",
+    "lime": "#ff8a1f",
+    "canvas": "#f3efe9"
+  },
+  "font": {
+    "file": "heading.woff2",
+    "use": "headings"
+  },
+  "effect": "bats",
+  "copy": {
+    "welcomeBack": [
+      "Boo, {first}! Welcome back. 🦇",
+      "Welcome back, {first}… if you dare.",
+      "The spirits have been waiting, {first}."
+    ],
+    "signInHeadline": "Bid if you dare.",
+    "signInTagline": "Scan a tag, place your bid, and we'll whisper if someone creeps past you.",
+    "placeBid": "Cast my bid 🎃",
+    "bidPlaced": [
+      "Your {amount} bid is cast!",
+      "{amount}: spookily good bid."
+    ],
+    "bidDialogTitle": [
+      "Mwahaha, it's yours… for now! 🎃",
+      "Spooktacular bid, {first}!"
+    ],
+    "bidDialogBody": "You've cast the highest bid on Lot {lot} ({title}). We'll send a shiver your way if something creeps past.",
+    "bidDialogButton": "Boo-yeah!",
+    "leadingTitle": "You're the top ghoul!",
+    "leadingBody": "We'll send a shiver your way if someone outbids you.",
+    "outbidTitle": [
+      "Eek! You've been outbid!",
+      "Something wicked outbid you!"
+    ],
+    "outbidBody": "Raise your bid before the clock strikes midnight.",
+    "endedTitle": "The crypt is sealed: bidding's over",
+    "wonBody": "It's yours, mwahaha! 🎃",
+    "lostBody": "This one vanished into the night. Thanks for bidding!",
+    "outbidEmailSubject": "👻 Boo! You've been outbid on Lot {lot}",
+    "outbidEmailBody": "A mysterious bidder has offered {amount} on Lot {lot} ({title}). Bid at least {minBid} to reclaim it… if you dare.",
+    "digestEmailSubject": "🎃 {items} have crept into {auction}",
+    "digestEmailIntro": "New things lurking since our last update:",
+    "notifyOutbid": "👻 Boo! Outbid on Lot {lot}: {title}",
+    "notifyWon": "🎃 Lot {lot} is yours, mwahaha: {title}!",
+    "notifyLost": "Lot {lot} ({title}) vanished into the night",
+    "notifyEmpty": "Nothing lurking here… yet.",
+    "notifyEndingSoon": "🕛 The clock strikes soon: Lot {lot} ({title}) ends within the hour",
+    "notifyNewItem": "🦇 Something new crept in: Lot {lot}: {title}",
+    "notifyNewItems": "🦇 {count} new items have crept in"
+  }
+}

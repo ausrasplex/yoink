@@ -6,6 +6,7 @@ import { bidStatus, ItemThumb, StatusBadge } from "@/components/item-card";
 import { Sparkline } from "@/components/sparkline";
 import { Button } from "@/components/ui/button";
 import { requireUser } from "@/lib/auth";
+import { pageCopy } from "@/lib/theme/active";
 import { db } from "@/lib/db";
 import { money } from "@/lib/format";
 import { listingTime, openNow } from "@/lib/listing";
@@ -38,6 +39,7 @@ export default async function Dashboard() {
   const outbid = open.length - leading.length;
   const won = mine.filter((b) => b.phase === "ended" && b.leading);
   const first = user.name.split(" ")[0];
+  const t = await pageCopy(); // the active theme's wording
   const winningTotal = leading.reduce((s, b) => s + b.myBid, 0);
 
   // Hero cards: items needing attention first, then top up with popular items.
@@ -63,7 +65,7 @@ export default async function Dashboard() {
       <section className="relative mb-8 overflow-hidden rounded-3xl bg-ink text-white lg:overflow-visible">
         <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center">
           <div className="max-w-sm">
-            <p className="text-sm text-white/60">Hi, {first}!</p>
+            <p className="text-sm text-white/60">{t("welcomeBack", { first, name: user.name })}</p>
             <h2 className="mt-3 text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">{headline}</h2>
             <p className="mt-2 text-sm text-white/60">{sub}</p>
             <Button asChild variant="soft" className="mt-6 uppercase tracking-wide text-xs">

@@ -2,19 +2,25 @@
 
 import { Gavel } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { placeBidAction } from "@/app/lot/[lot]/actions";
+import { BidCelebration, type Celebration } from "@/components/bid-celebration";
 import { Countdown, useNow } from "@/components/countdown";
+import { useCopy } from "@/components/theme/theme-provider";
 import { money } from "@/lib/format";
 import { listingTime, phaseOf, shortDuration } from "@/lib/listing";
 import type { LotStatus } from "@/lib/status";
 
 const POLL_MS = 3000;
 
-export function BidPanel({ lot, initial, startingBid, increment }: { lot: number; initial: LotStatus; startingBid: number; increment: number }) {
+export function BidPanel({ lot, title, first, initial, startingBid, increment }: {
+  lot: number; title: string; first: string; initial: LotStatus; startingBid: number; increment: number;
+}) {
+  const [celebrate, setCelebrate] = useState<Celebration | null>(null); // "you're the highest bidder" dialog
+  const [celebrating, setCelebrating] = useState(false);
+  const t = useCopy(); // the active theme's wording
   const [status, setStatus] = useState(initial);
   const [amount, setAmount] = useState(String(initial.minBid));
   const [error, setError] = useState<string | null>(null);
@@ -58,7 +64,8 @@ export function BidPanel({ lot, initial, startingBid, increment }: { lot: number
     start(async () => {
       const res = await placeBidAction(lot, parsed);
       if (res.ok) {
-        toast.success(`Bid of ${money(res.amount)} placed`);
+        setCelebrate({ amount: money(res.amount), lot, title, first });
+        setCelebrating(true);
         touched.current = false;
       } else {
         setError(res.error);
@@ -89,9 +96,9 @@ export function BidPanel({ lot, initial, startingBid, increment }: { lot: number
         </div>
       ) : phase === "ended" ? (
         <div className="mt-5 rounded-2xl bg-white/10 p-4">
-          <p className="font-bold">Bidding has ended</p>
+          <p className="font-bold">{t("endedTitle")}</p>
           <p className="mt-1 text-sm text-white/70">
-            {status.youLead ? "Congratulations, you won this item!" : status.youBid ? "Someone else won this one. Thanks for bidding." : `Ended ${listingTime(status.endsAt)}.`}
+            {status.youLead ? t("wonBody", { lot }) : status.youBid ? t("lostBody", { lot }) : `Ended ${listingTime(status.endsAt)}.`}
           </p>
         </div>
       ) : (
@@ -102,14 +109,14 @@ export function BidPanel({ lot, initial, startingBid, increment }: { lot: number
           </p>
           {status.youLead && (
             <div className="mt-5 rounded-2xl bg-lime p-4 text-ink">
-              <p className="font-extrabold">You&apos;re the highest bidder</p>
-              <p className="text-sm text-ink/70">We&apos;ll email you if someone outbids you.</p>
+              <p className="font-extrabold">{t("leadingTitle", { lot })}</p>
+              <p className="text-sm text-ink/70">{t("leadingBody", { lot })}</p>
             </div>
           )}
           {outbid && (
             <div className="mt-5 rounded-2xl bg-peach p-4 text-ink">
-              <p className="font-extrabold">You&apos;ve been outbid</p>
-              <p className="text-sm text-ink/70">Place a higher bid to take the lead.</p>
+              <p className="font-extrabold">{t("outbidTitle", { lot })}</p>
+              <p className="text-sm text-ink/70">{t("outbidBody", { lot, minBid: money(status.minBid) })}</p>
             </div>
           )}
           {!status.youLead && (
@@ -136,13 +143,14 @@ export function BidPanel({ lot, initial, startingBid, increment }: { lot: number
                 />
               </div>
               <Button type="submit" variant="lime" size="lg" className="w-full" disabled={pending || !valid}>
-                <Gavel /> {pending ? "Bidding…" : "Place bid"}
+                <Gavel /> {pending ? "Bidding…" : t("placeBid")}
               </Button>
               {error && <p className="text-sm font-semibold text-peach">{error}</p>}
             </form>
           )}
         </>
       )}
+      <BidCelebration open={celebrating} data={celebrate} onClose={() => setCelebrating(false)} />
     </section>
   );
 }
