@@ -70,7 +70,9 @@ export function NotificationBell({ initial }: { initial: Feed }) {
           </span>
         )}
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[min(22rem,calc(100vw-2rem))] p-0">
+      {/* Phones: nearly full width, but 1.5rem in from each edge (the page content sits 1rem in), so it reads as an
+          overlay rather than another card; collisionPadding shifts it into place. From sm up, a 22rem panel under the bell. */}
+      <DropdownMenuContent align="end" collisionPadding={24} className="w-[calc(100vw-3rem)] p-0 sm:w-[22rem]">
         <div className="flex items-center justify-between gap-2 px-3 py-2.5">
           <DropdownMenuLabel className="p-0 text-sm font-extrabold text-ink">{t("notifyHeading")}</DropdownMenuLabel>
           {feed.unread > 0 && (

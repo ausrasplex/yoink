@@ -1,3 +1,4 @@
+import { AppFooter } from "@/components/app-footer";
 import type { Role } from "@/lib/format";
 import { listNotifications } from "@/lib/notifications";
 import { getShellInfo } from "@/lib/user-data";
@@ -21,9 +22,11 @@ export async function AppShell({ user, children }: { user: ShellUser; children: 
       {/* overflow-x-clip: if anything is ever too wide, clip it here instead of widening the whole page on phones
           (a wider page also drags the fixed bottom nav off-screen) */}
       <div className="min-w-0 flex-1 overflow-x-clip">
-        <div className="mx-auto w-full max-w-7xl">
+        <div className="mx-auto flex min-h-dvh w-full max-w-7xl flex-col">
           <TopBar brand={info.name} logo={info.logo} logoWide={info.logoWide} name={user.name} email={user.email} avatar={user.avatar ?? null} role={user.role} notifications={notifications} />
-          <main className="px-4 pb-28 pt-2 lg:px-10 lg:pb-12">{children}</main>
+          <main className="flex-1 px-4 pt-2 lg:px-10">{children}</main>
+          {/* below lg the fixed bottom nav covers the last ~6rem, so the footer sits above that gap */}
+          <AppFooter name={info.name} className="px-4 pb-28 pt-10 lg:px-10 lg:pb-8" />
         </div>
       </div>
       <MobileNav role={user.role} alert={info.outbid > 0} />

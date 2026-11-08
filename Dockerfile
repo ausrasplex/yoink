@@ -18,6 +18,9 @@ FROM base AS build
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+# Set by CI to the commit SHA (Next's version-skew protection); empty for local builds.
+ARG NEXT_DEPLOYMENT_ID=""
+ENV NEXT_DEPLOYMENT_ID=$NEXT_DEPLOYMENT_ID
 RUN npx prisma generate && npm run build
 
 # Prisma CLI on its own, pinned to the version in package-lock.json, just for `migrate deploy` at start-up.

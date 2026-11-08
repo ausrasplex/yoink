@@ -1,3 +1,4 @@
+import { AppFooter } from "@/components/app-footer";
 import { BrandLockup } from "@/components/brand-mark";
 import { getAuction } from "@/lib/auction";
 import { brandImages } from "@/lib/brand";
@@ -37,6 +38,7 @@ export async function AuthShell({ children }: { children: React.ReactNode }) {
           <BrandLockup name={name} logo={logo} logoWide={logoWide} />
         </div>
         <div className="w-full max-w-sm">{children}</div>
+        <AppFooter name={name} className="mt-4" />
       </div>
     </main>
   );

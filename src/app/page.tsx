@@ -56,7 +56,7 @@ export default async function Dashboard() {
     : "Your listings have ended";
   const sub = mine.length === 0 || open.length === 0
     ? `${plural(openCount)} ${openCount === 1 ? "is" : "are"} open for bidding.`
-    : outbid > 0 ? `Outbid on ${outbid} — time to bid again.` : `Hi, ${first}.`;
+    : outbid > 0 ? `Outbid on ${outbid} — time to bid again.` : null; // the greeting above already says hi
 
   return (
     <AppShell user={user}>
@@ -65,9 +65,9 @@ export default async function Dashboard() {
       <section className="relative mb-8 overflow-hidden rounded-3xl bg-ink text-white lg:overflow-visible">
         <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center">
           <div className="max-w-sm">
-            <p className="text-sm text-white/60">{t("welcomeBack", { first, name: user.name })}</p>
+            <p className="text-base font-bold text-lime sm:text-lg">{t("welcomeBack", { first, name: user.name })}</p>
             <h2 className="mt-3 text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">{headline}</h2>
-            <p className="mt-2 text-sm text-white/60">{sub}</p>
+            {sub && <p className="mt-2 text-sm text-white/60">{sub}</p>}
             <Button asChild variant="soft" className="mt-6 uppercase tracking-wide text-xs">
               <Link href={mine.length ? "/bids" : "/items"}>See all <ArrowUpRight /></Link>
             </Button>
