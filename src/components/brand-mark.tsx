@@ -10,18 +10,20 @@ import { cn } from "@/lib/utils";
  * the name. Images are URLs, worked out by brandImages() (active theme → Branding upload → default). `size`: sidebar /
  * top bar ("md") or sign-in screens ("lg").
  */
-export function BrandLockup({ name, logo, logoWide, size = "md", nameClassName }: {
+export function BrandLockup({ name, logo, logoWide, size = "md", nameClassName, center = false }: {
   name: string; logo: string | null; logoWide: string | null; size?: "md" | "lg"; nameClassName?: string;
+  /** Centre it in its space (the desktop sidebar) instead of aligning left. */
+  center?: boolean;
 }) {
   if (logoWide) {
     return (
       // eslint-disable-next-line @next/next/no-img-element -- small image from our own routes
       <img src={logoWide} alt={name}
-        className={cn("w-auto max-w-full object-contain object-left", size === "lg" ? "h-12 max-w-72" : "h-10 max-w-48")} />
+        className={cn("w-auto max-w-full object-contain", center ? "mx-auto object-center" : "object-left", size === "lg" ? "h-12 max-w-72" : "h-10 max-w-48")} />
     );
   }
   return (
-    <span className="flex min-w-0 items-center gap-2.5">
+    <span className={cn("flex min-w-0 items-center gap-2.5", center && "justify-center")}>
       <BrandMark logo={logo} className={size === "lg" ? "size-10" : "size-9"} />
       <span className={cn("line-clamp-2 leading-tight", nameClassName)}>{name}</span>
     </span>

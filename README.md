@@ -34,7 +34,8 @@ Uploads live in the **App data** path (`/data`); back it up along with the datab
 
 ## Running an event
 1. As the **server admin**: set the app name/logo and SMTP on **Server**, then invite admins on **Admins**.
-1. As an **admin** → **Admin**: set the auction name (Auction setup).
+1. As an **admin**: review **Settings** (registration, sign-in security, emails, terms). The app's name is set by the server
+   admin under **Server → Branding**.
 2. **Add item** (title, description, starting bid, increment, photos) and its listing: start and end time (prefilled now → 7 days)
    and whether Users can see it before it starts ("Visible, starts in…") or not ("Hidden until it starts").
 3. **QR codes** → print. Codes point at `APP_URL`, so set it to an address guests' phones can reach.
@@ -86,7 +87,7 @@ can look around (**replaces** items, bids and user accounts, so never run it on 
   behind a reverse proxy that sets it). Locked accounts show a badge on **Users** with an Unlock button.
 - **Settings → Emails:** (admin) a master *Send emails* switch plus one per kind: outbid emails (sent after the bid is saved,
   never blocking bidding) and password-reset emails (off hides "Forgot password?") and a **daily new items** email at a chosen hour (venue time), listing
-  listings added since the last one; Users can opt out under Settings → Emails. The check runs every 5 minutes from
+  listings added since the last one; Users can opt out under Account → Emails. The check runs every 5 minutes from
   `src/instrumentation.ts` (`src/lib/digest.ts`), claims the day atomically so it's sent once, and skips days with nothing new. With the master off nothing is sent, and
   admin invites fall back to a link the server admin shares by hand. They go through the server admin's SMTP connection;
   the Server page notes when admins have switched email off. All gating lives in `emailStatusOf()` in `src/lib/mail.ts`.
@@ -101,9 +102,9 @@ can look around (**replaces** items, bids and user accounts, so never run it on 
   Preview (your browser only), install from a `.zip`, download, delete. Built in: Christmas, Halloween, Autumn, Britney.
   Theme authors: see [themes/THEMES.md](themes/THEMES.md); to have ChatGPT/Claude make one, paste in
   [themes/AI-THEME-GUIDE.md](themes/AI-THEME-GUIDE.md) (both are inside the Starter template download).
-- **Profile pictures:** everyone (user, admin, server admin) can add one under **Settings → Profile** (JPEG, PNG or WebP, up to
+- **Profile pictures:** everyone (user, admin, server admin) can add one under **Account → Profile** (JPEG, PNG or WebP, up to
   5 MB; no SVG). Shown instead of initials in the top bar, Users/Admins lists and bid history.
-- **Server → Branding:** (server admin) app name (falls back to the auction name) and logo (SVG, PNG, JPEG or WebP), shown in the sidebar,
+- **Server → Branding:** (server admin) app name ("Yoink" when blank; used everywhere, including emails) and logo (SVG, PNG, JPEG or WebP), shown in the sidebar,
   sign-in screens, browser tab and emails. An optional **landscape logo** replaces the icon + name in the sidebar, top bar
   and sign-in screens. Both are served publicly (`/brand/logo`, `/brand/wordmark`) so the sign-in page can show them.
 - **Users:** add users (generated temp password shown once), edit name/email/shift, reset password, unlock, delete

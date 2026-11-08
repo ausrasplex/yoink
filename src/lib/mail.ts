@@ -85,7 +85,7 @@ export async function sendOutbidEmail(p: { userId: string; lot: number; title: s
         `Hi ${user.name},\n\n` +
         `${say("outbidEmailBody", { lot: p.lot, title: p.title, amount: money(p.amount), minBid: money(p.minBid), name: user.name })}\n` +
         `To take the lead again you'll need to bid at least ${money(p.minBid)}.\n${ends}\n` +
-        `${link}\n\n${t.auction.name}`,
+        `${link}\n\n${brandName(t.auction)}`,
     });
   } catch (e) {
     // Never let a mail problem affect bidding.
@@ -133,7 +133,7 @@ export async function sendInviteEmail(p: { to: string; name: string; link: strin
       subject: `You're invited to be an admin on ${app}`,
       text:
         `Hi ${p.name},\n\n` +
-        `${p.invitedBy} has invited you to help run ${t.auction.name} as an admin.\n` +
+        `${p.invitedBy} has invited you to help run ${app} as an admin.\n` +
         `Use this link to choose your password. It works once and expires in ${p.days} days:\n\n` +
         `${p.link}\n\n` +
         `If you weren't expecting this, you can ignore this email.\n\n${app}`,
@@ -174,12 +174,12 @@ export async function sendNewItemsDigest(items: DigestItem[]): Promise<number> {
       await t.transport.sendMail({
         from: t.from,
         to: r.email,
-        subject: say("digestEmailSubject", { items: `${items.length} new item${items.length === 1 ? "" : "s"}`, count: items.length, auction: t.auction.name, name: r.name }),
+        subject: say("digestEmailSubject", { items: `${items.length} new item${items.length === 1 ? "" : "s"}`, count: items.length, auction: app, name: r.name }),
         text: [
           `Hi ${r.name},`, "",
           say("digestEmailIntro", { count: items.length, name: r.name }), "",
           list, "",
-          `Don't want these? Turn off the daily email in your settings: ${base}/settings`, "",
+          `Don't want these? Turn off the daily email on your Account page: ${base}/settings`, "",
           app,
         ].join("\n"),
       });

@@ -69,7 +69,9 @@ export default async function ServerSettingsPage() {
             />
           </div>
         </SectionCard>
-        <BrandingForm head={{ icon: <Palette className="size-5" />, title: "Branding" }} appName={a.appName} appSlogan={a.appSlogan} auctionName={a.name} logo={a.appLogo ? `/brand/logo?v=${a.appLogo}` : null} logoWide={a.appLogoWide ? `/brand/wordmark?v=${a.appLogoWide}` : null} />
+        <BrandingForm head={{ icon: <Palette className="size-5" />, title: "Branding" }} appName={a.appName} appSlogan={a.appSlogan} logo={a.appLogo ? `/brand/logo?v=${a.appLogo}` : null} logoWide={a.appLogoWide ? `/brand/wordmark?v=${a.appLogoWide}` : null}
+          logoDark={a.appLogoDark ? `/brand/logo?variant=dark&v=${a.appLogoDark}` : null}
+          logoWideDark={a.appLogoWideDark ? `/brand/wordmark?variant=dark&v=${a.appLogoWideDark}` : null} />
         <SectionCard icon={<Sparkles className="size-5" />} title="Themes"
           desc="Seasonal looks and wording for everyone: colours, images, a font, an effect and fancy text for bids and emails. Preview only changes your own browser.">
           <ThemeManager themes={themeCards} mode={a.theme} showingId={showing.id}
@@ -79,7 +81,7 @@ export default async function ServerSettingsPage() {
             head={{
               icon: <Mail className="size-5" />,
               title: "Email (SMTP)",
-              desc: `Sends outbid notifications, "Forgot password" links and admin invites; admins choose which go out (Auction Setup → Emails).${!a.emailEnabled ? " Admins have currently turned all emails off." : ""}${!secretOk ? " Set APP_SECRET in the server environment before saving an SMTP password." : ""}`,
+              desc: `Sends outbid notifications, "Forgot password" links and admin invites; admins choose which go out (their Settings → Emails).${!a.emailEnabled ? " Admins have currently turned all emails off." : ""}${!secretOk ? " Set APP_SECRET in the server environment before saving an SMTP password." : ""}`,
             }}
             smtpHost={a.smtpHost} smtpPort={a.smtpPort} smtpSecure={a.smtpSecure} smtpUser={a.smtpUser}
             smtpFrom={a.smtpFrom} hasPassword={!!a.smtpPassEnc} adminEmail={user.email}

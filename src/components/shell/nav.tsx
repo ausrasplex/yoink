@@ -3,26 +3,27 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Boxes, Gavel, History, LayoutGrid, QrCode, Server, Settings, SlidersHorizontal, UserRoundStar, Users, Wallet, type LucideIcon,
+  Boxes, Gavel, History, LayoutGrid, QrCode, Server, CircleUser, SlidersHorizontal, UserRoundStar, Users, Wallet, type LucideIcon,
 } from "lucide-react";
 import type { Role } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
-type Item = { href: string; label: string; icon: LucideIcon; match?: (p: string) => boolean };
+export type Item = { href: string; label: string; icon: LucideIcon; match?: (p: string) => boolean };
 
 const userItems: Item[] = [
   { href: "/", label: "Dashboard", icon: LayoutGrid, match: (p) => p === "/" },
   { href: "/items", label: "Items", icon: Gavel, match: (p) => p.startsWith("/items") || p.startsWith("/lot") },
   { href: "/bids", label: "My Bids", icon: Wallet },
-  { href: "/settings", label: "Settings", icon: Settings },
+  { href: "/settings", label: "Account", icon: CircleUser },
 ];
 
-const adminItems: Item[] = [
+/** Admin pages: the desktop sidebar's ADMIN group, and on phones/tablets the profile menu (see TopBar). */
+export const adminItems: Item[] = [
   { href: "/admin", label: "Manage Items", icon: Boxes, match: (p) => p === "/admin" || p.startsWith("/admin/items") },
   { href: "/admin/history", label: "Bid History", icon: History },
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/qr", label: "QR Codes", icon: QrCode },
-  { href: "/admin/settings", label: "Auction Setup", icon: SlidersHorizontal },
+  { href: "/admin/settings", label: "Settings", icon: SlidersHorizontal },
 ];
 
 const isActive = (item: Item, path: string) => (item.match ? item.match(path) : path.startsWith(item.href));
@@ -57,7 +58,7 @@ function Group({ items, path }: { items: Item[]; path: string }) {
 const serverItems: Item[] = [
   { href: "/server", label: "Server", icon: Server, match: (p) => p === "/server" },
   { href: "/server/admins", label: "Admins", icon: UserRoundStar },
-  { href: "/settings", label: "Settings", icon: Settings },
+  { href: "/settings", label: "Account", icon: CircleUser },
 ];
 
 export function SidebarNav({ role }: { role: Role }) {
@@ -80,9 +81,8 @@ export function SidebarNav({ role }: { role: Role }) {
 
 export function MobileNav({ role, alert }: { role: Role; alert: boolean }) {
   const path = usePathname();
-  const items = role === "SERVER_ADMIN" ? serverItems : role === "ADMIN"
-    ? [userItems[0], userItems[1], userItems[2], { href: "/admin", label: "Admin", icon: Boxes, match: (p: string) => p.startsWith("/admin") } as Item, userItems[3]]
-    : userItems;
+  // The bar keeps the everyday pages; Admins reach the admin pages from the profile menu (TopBar) on phones.
+  const items = role === "SERVER_ADMIN" ? serverItems : userItems;
   return (
     <nav className="fixed inset-x-3 bottom-3 z-40 rounded-full bg-ink p-1.5 shadow-lg lg:hidden" aria-label="Main">
       {/* p-1.5 on the bar + justify-between: the gap at each end matches the gap above and below the buttons */}

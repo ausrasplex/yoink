@@ -102,7 +102,7 @@ async function main() {
 
   await db.auction.upsert({
     where: { id: 1 },
-    update: { name: "Spring Charity Gala", registrationOpen: true, terms: "All proceeds support the local community hall.\nWinners must collect and pay on the night, or within 7 days.\nAll sales are final." },
+    update: { appName: "Spring Charity Gala", registrationOpen: true, terms: "All proceeds support the local community hall.\nWinners must collect and pay on the night, or within 7 days.\nAll sales are final." },
     create: { id: 1 },
   });
 

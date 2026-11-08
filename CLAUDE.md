@@ -67,7 +67,7 @@ src/components/    shell/ (AppShell, sidebar, top bar, mobile nav), admin/, sett
 
 ## Data model (short)
 User(role USER|ADMIN|SERVER_ADMIN, shift?, mustChangePassword, avatar?) · Session(tokenHash, expiresAt, lastSeenAt, userAgent, ip) ·
-Auction (single row id=1: name, registrationOpen, terms, login limits, SMTP fields, qrLogo, qrColor, appName?, appLogo? (icon), appLogoWide? (landscape), appSlogan?, theme, emailEnabled, emailPasswordReset) ·
+Auction (single row id=1: registrationOpen, terms, login limits, SMTP fields, qrLogo, qrColor, appName? (the app's one name; brandName() → "Yoink" when empty), appLogo?/appLogoDark? (icon), appLogoWide?/appLogoWideDark? (landscape), appSlogan?, theme, emailEnabled, emailPasswordReset) ·
 Invite(email, name, tokenHash, expiresAt — admin invites, single use, 7 days) ·
 Item(lot autoincrement, startingBid, minIncrement, currentBid?, highBidderId?, startsAt, endsAt, hiddenUntilStart) · ItemImage · Bid · LoginAttempt · PasswordReset.
 Money is **whole dollars** (Int).

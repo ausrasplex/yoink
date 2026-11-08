@@ -49,16 +49,17 @@ model Session {
 
 // Single-row table (id = 1) holding event-wide settings.
 model Auction {
-  id   Int    @id @default(1)
-  name String @default("Silent Auction")
+  id Int @id @default(1)
   // (Bidding windows are per item now: see Item.startsAt / endsAt.)
 
-  // Server branding (server admin only). appName falls back to the auction name when empty.
-  appName     String?
-  appLogo     String? // square icon: tab icon, compact spots
-  appLogoWide String? // landscape logo: replaces icon + name in the sidebar, top bar and sign-in screens
-  appSlogan   String? // short tagline shown under the name (sign-in screens, page description)
-  theme       String  @default("auto") // "auto" (by each theme's dates) or a theme id to always show — see src/lib/theme
+  // Server branding (server admin only). appName is the app's name everywhere ("Yoink" when empty).
+  appName         String?
+  appLogo         String? // square icon: tab icon, compact spots
+  appLogoWide     String? // landscape logo: replaces icon + name in the sidebar, top bar and sign-in screens
+  appLogoDark     String? // icon for dark backgrounds (e.g. the desktop sign-in panel); falls back to appLogo
+  appLogoWideDark String? // landscape logo for dark backgrounds; falls back to appLogoWide
+  appSlogan       String? // short tagline shown under the name (sign-in screens, page description)
+  theme           String  @default("auto") // "auto" (by each theme's dates) or a theme id to always show — see src/lib/theme
 
   registrationOpen Boolean @default(true)
   terms            String  @default("")

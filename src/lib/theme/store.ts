@@ -108,7 +108,7 @@ export function pickTheme(mode: string, previewId: string | null, now = new Date
 export type ActiveTheme = {
   id: string; name: string; effect: Effect; copy: CopyTable;
   colours: ThemeFile["colours"];
-  images: { icon?: string; logo?: string; background?: string }; // URLs
+  images: { icon?: string; iconDark?: string; logo?: string; logoDark?: string; background?: string }; // URLs
   font?: { url: string; use: "headings" | "all" };
   previewing: boolean;
 };
@@ -121,7 +121,9 @@ export function activeTheme(mode: string, previewId: string | null): ActiveTheme
   return {
     id: t.id, name: t.theme.name, effect: t.theme.effect, copy: copyTable(t.theme.copy), colours: t.theme.colours,
     images: {
-      icon: img.icon && assetUrl(t, img.icon), logo: img.logo && assetUrl(t, img.logo), background: img.background && assetUrl(t, img.background),
+      icon: img.icon && assetUrl(t, img.icon), iconDark: img.iconDark && assetUrl(t, img.iconDark),
+      logo: img.logo && assetUrl(t, img.logo), logoDark: img.logoDark && assetUrl(t, img.logoDark),
+      background: img.background && assetUrl(t, img.background),
     },
     font: t.theme.font ? { url: assetUrl(t, t.theme.font.file), use: t.theme.font.use } : undefined,
     previewing: !!previewId && previewId === t.id,

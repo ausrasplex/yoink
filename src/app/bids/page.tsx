@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Archive, ChevronRight, Crown, PackageCheck, TrendingDown, Wallet } from "lucide-react";
+import { Archive, ChevronRight, Crown, Lock, PackageCheck, TrendingDown, Wallet } from "lucide-react";
 import { ClaimButton } from "@/components/claim-button";
 import { Badge } from "@/components/ui/badge";
 import { AppShell, PageTitle } from "@/components/shell/app-shell";
@@ -35,7 +35,7 @@ export default async function BidsPage({ searchParams }: { searchParams: Promise
             { value: "all", label: "All", count: all.length },
             { value: "winning", label: "Winning", icon: <Crown className="size-3.5" />, count: all.filter((b) => b.leading && b.phase !== "ended").length },
             { value: "outbid", label: "Outbid", icon: <TrendingDown className="size-3.5" />, count: all.filter((b) => !b.leading && b.phase !== "ended").length },
-            { value: "ended", label: "Ended", count: all.filter((b) => b.phase === "ended").length },
+            { value: "ended", label: "Ended", icon: <Lock className="size-3.5" />, count: all.filter((b) => b.phase === "ended").length },
             { value: "archived", label: "Archived", icon: <Archive className="size-3.5" />, count: archived.length },
           ]}
         />

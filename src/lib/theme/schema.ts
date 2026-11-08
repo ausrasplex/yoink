@@ -25,7 +25,7 @@ export const themeSchema = z.object({
   /** Switches on automatically between these dates every year (when the Server page is set to Automatic). May wrap past New Year. */
   active: z.object({ from: monthDay, to: monthDay }).optional(),
   colours: z.object({ ink: hex, lilac: hex, peach: hex, lime: hex, canvas: hex }).partial().optional(),
-  images: z.object({ icon: image, logo: image, background: image }).partial().optional(),
+  images: z.object({ icon: image, iconDark: image, logo: image, logoDark: image, background: image }).partial().optional(),
   font: z.object({
     file: z.string().regex(ASSET_NAME).refine((f) => FONT_ASSET.test(f), "Must be WOFF2, WOFF, TTF or OTF"),
     use: z.enum(["headings", "all"]).default("headings"),

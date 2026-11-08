@@ -7,8 +7,8 @@ export type Role = "USER" | "ADMIN" | "SERVER_ADMIN";
 
 export const roleLabel = (role: Role) => (role === "SERVER_ADMIN" ? "Server admin" : role === "ADMIN" ? "Admin" : "User");
 
-/** What the sidebar, top bar and auth screens show: the app name, or the auction name if none is set. */
-export const brandName = (a: { appName: string | null; name: string }) => a.appName || a.name;
+/** The app's name everywhere (sidebar, sign-in, tab, emails): the Branding name, or "Yoink" if none is set. */
+export const brandName = (a: { appName: string | null }) => a.appName || "Yoink";
 
 /** 1536 → "1.5 KB" (binary units, one decimal from MB up). */
 export function bytes(n: number): string {

@@ -62,7 +62,7 @@ Only `name` is required. Everything else is optional — leave something out and
 | `description` | A line about the theme, shown on the Server page. |
 | `active` | `from` / `to` as `MM-DD`. In *Automatic* mode the theme switches on between those dates every year (in the venue's time zone). Can wrap past New Year (`12-20` → `01-05`). If two dated themes overlap, the shorter window wins. No `active` = only shows when chosen. |
 | `colours` | Any of `ink` (text and dark surfaces), `lilac`, `peach`, `lime` (accents and main buttons) and `canvas` (page background), as `#rrggbb`. Keep `ink` dark: it's the text colour. |
-| `images` | `icon` (square: browser tab and next to the name), `logo` (landscape, replaces icon + name), `background` (behind the whole app). Theme images win over the Branding uploads while the theme is on. |
+| `images` | `icon` (square: browser tab and next to the name), `logo` (landscape, replaces icon + name), `iconDark` / `logoDark` (versions for dark backgrounds such as the desktop sign-in panel; fall back to `icon` / `logo`), `background` (behind the whole app). Theme images win over the Branding uploads while the theme is on. |
 | `font` | `file` in the folder, and `use`: `"headings"` (titles only — good for decorative fonts) or `"all"`. Check the font's licence allows it (Google Fonts' are fine). |
 | `effect` | `none`, `snow`, `leaves`, `bats` or `confetti`. Off automatically for people whose device asks for reduced motion. |
 | `copy` | Wording. Each key is a piece of text, or a list of options — one is picked per day, so it varies without changing mid-visit. |
@@ -99,7 +99,7 @@ Only `name` is required. Everything else is optional — leave something out and
 | `notifyMarkAll` | Mark all as read | |
 | `outbidEmailSubject` | You've been outbid on Lot {lot}: {title} | `{lot}` `{title}` `{amount}` `{minBid}` `{name}` |
 | `outbidEmailBody` | Someone has bid {amount} on Lot {lot} ({title}), so you're no longer the highest bidder. | same as above |
-| `digestEmailSubject` | {items} in {auction} | `{items}` ("3 new items") `{count}` `{auction}` `{name}` — daily new-items email |
+| `digestEmailSubject` | {items} in {auction} | `{items}` ("3 new items") `{count}` `{auction}` (the app's name) `{name}` — daily new-items email |
 | `digestEmailIntro` | Here's what's been added since the last update: | `{count}` `{name}` |
 
 ## Built-in themes

@@ -1,4 +1,4 @@
-import { Crown, SearchX, TrendingDown, Gavel } from "lucide-react";
+import { Clock, Crown, SearchX, TrendingDown, Gavel } from "lucide-react";
 import { SearchBox } from "@/components/search-box";
 import { AppShell, PageTitle } from "@/components/shell/app-shell";
 import { FilterChips } from "@/components/filter-chips";
@@ -49,10 +49,10 @@ export default async function ItemsPage({ searchParams }: { searchParams: Promis
           base="/items" current={filter} q={term}
           options={[
             { value: "all", label: "All", count: rows.length },
-            { value: "open", label: "Open now", count: count((r) => phaseOf(r.i) === "open") },
+            { value: "open", label: "Open now", icon: <Clock className="size-3.5" />, count: count((r) => phaseOf(r.i) === "open") },
             { value: "winning", label: "Winning", icon: <Crown className="size-3.5" />, count: count((r) => r.status === "winning") },
             { value: "outbid", label: "Outbid", icon: <TrendingDown className="size-3.5" />, count: count((r) => r.status === "outbid") },
-            { value: "nobids", label: "No bids yet", count: count((r) => r.i._count.bids === 0) },
+            { value: "nobids", label: "No bids yet", icon: <Gavel className="size-3.5" />, count: count((r) => r.i._count.bids === 0) },
           ]}
         />
       </div>

@@ -73,14 +73,6 @@ export async function deleteItemAction(id: string) {
   redirect("/admin");
 }
 
-export async function saveSettingsAction(_: AdminState, form: FormData): Promise<AdminState> {
-  await requireAdmin();
-  const name = String(form.get("name") ?? "").trim().slice(0, 80) || "Silent Auction";
-  await db.auction.upsert({ where: { id: 1 }, update: { name }, create: { id: 1, name } });
-  revalidatePath("/", "layout");
-  return { saved: true };
-}
-
 /** Admin: delete archived (ended) listings in bulk. Anything not ended yet is left alone. */
 export async function deleteArchivedItemsAction(ids: string[]): Promise<AdminState> {
   await requireAdmin();

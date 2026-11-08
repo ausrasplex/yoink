@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { LogOut, Search } from "lucide-react";
 import { BrandLockup } from "@/components/brand-mark";
+import { adminItems } from "@/components/shell/nav";
 import { NotificationBell } from "@/components/shell/notification-bell";
 import type { NotificationRow } from "@/lib/notifications";
 import { UserAvatar } from "@/components/user-avatar";
@@ -12,10 +13,10 @@ import {
 import { logoutAction } from "@/app/actions";
 import type { Role } from "@/lib/format";
 
-export function Brand({ name, logo, logoWide }: { name: string; logo: string | null; logoWide: string | null }) {
+export function Brand({ name, logo, logoWide, center = false }: { name: string; logo: string | null; logoWide: string | null; center?: boolean }) {
   return (
-    <Link href="/" className="flex min-w-0 items-center font-extrabold tracking-tight text-ink">
-      <BrandLockup name={name} logo={logo} logoWide={logoWide} nameClassName="text-base" />
+    <Link href="/" className={`flex min-w-0 items-center font-extrabold tracking-tight text-ink ${center ? "justify-center" : ""}`}>
+      <BrandLockup name={name} logo={logo} logoWide={logoWide} nameClassName="text-base" center={center} />
     </Link>
   );
 }
@@ -54,7 +55,19 @@ export function TopBar(p: {
               <p className="truncate text-sm font-bold">{p.name}</p>
               <p className="truncate text-xs text-muted-foreground">{p.email}</p>
             </DropdownMenuLabel>
-            {/* Pages live in the sidebar / bottom nav; the account menu only signs out. */}
+            {/* Desktop: pages live in the sidebar, so this menu only logs out. Phones/tablets: the bottom bar keeps the
+                everyday pages and the admin pages live here (lg:hidden). */}
+            {p.role === "ADMIN" && (
+              <div className="lg:hidden">
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Admin</DropdownMenuLabel>
+                {adminItems.map((item) => (
+                  <DropdownMenuItem key={item.href} asChild>
+                    <Link href={item.href}><item.icon className="size-4" /> {item.label}</Link>
+                  </DropdownMenuItem>
+                ))}
+              </div>
+            )}
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <form action={logoutAction}>

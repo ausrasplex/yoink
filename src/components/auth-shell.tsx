@@ -9,14 +9,15 @@ import { copyFor } from "@/lib/theme/copy";
 export async function AuthShell({ children }: { children: React.ReactNode }) {
   const auction = await getAuction();
   const name = brandName(auction);
-  const { logo, logoWide } = await brandImages(auction);
+  const { logo, logoWide, logoDark, logoWideDark } = await brandImages(auction);
   const theme = await getActiveTheme();
   const t = (k: Parameters<typeof copyFor>[1]) => copyFor(theme.copy, k);
   return (
     <main className="grid min-h-dvh lg:grid-cols-[1.05fr_1fr]">
       <div className="relative hidden overflow-hidden bg-ink p-12 text-white lg:flex lg:flex-col">
         <div className="text-xl font-extrabold tracking-tight">
-          <BrandLockup name={name} logo={logo} logoWide={logoWide} size="lg" />
+          {/* on the navy panel: the versions for dark backgrounds */}
+          <BrandLockup name={name} logo={logoDark} logoWide={logoWideDark} size="lg" />
         </div>
         <div className="relative z-10 mt-28 max-w-sm">
           {/* Headline: the active theme's if it sets one, else the Branding slogan, else the default. */}

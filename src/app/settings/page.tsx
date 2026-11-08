@@ -1,4 +1,4 @@
-import { KeyRound, Monitor, MonitorSmartphone, Smartphone, UserRound, Settings, Mail } from "lucide-react";
+import { KeyRound, Monitor, MonitorSmartphone, Smartphone, UserRound, CircleUser, Mail } from "lucide-react";
 import { RevokeButton, RevokeOthersButton, SignOutAllButton } from "@/components/settings/session-actions";
 import { ProfileForm } from "@/components/settings/profile-form";
 import { AvatarPicker } from "@/components/settings/avatar-picker";
@@ -42,7 +42,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
 
   return (
     <AppShell user={session}>
-      <PageTitle icon={<Settings />} sub="Your account, password and signed-in devices.">Settings</PageTitle>
+      <PageTitle icon={<CircleUser />} sub="Your profile, password, emails and signed-in devices.">Account</PageTitle>
       <div className="grid grid-cols-1 gap-6">
         {/* Only the server admin edits their own details; everyone else asks an organiser. */}
         {user.role === "SERVER_ADMIN" ? (

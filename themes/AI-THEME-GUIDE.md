@@ -55,7 +55,7 @@ Only `name` is required. Leave out anything you don't need; the app's defaults f
 | `description` | String, up to 200 characters. One sentence about the theme. |
 | `active` | Object `{ "from": "MM-DD", "to": "MM-DD" }`, both required if present. Months `01`–`12`, days `01`–`31`, two digits each, joined by `-`. The theme switches itself on between those dates **every year** (in the venue's time zone) when the app is set to Automatic. The window may wrap past New Year (`"12-20"` → `"01-05"`). Leave `active` out for a theme that's only switched on by hand. The app is used in Australia by default (southern hemisphere: autumn is March–May, Christmas is in summer) unless the user says otherwise. |
 | `colours` | Object with any of `ink`, `lilac`, `peach`, `lime`, `canvas`. Each exactly `#rrggbb` (six hex digits, no shorthand, no names, no alpha). See "Colours". |
-| `images` | Object with any of `icon`, `logo`, `background`. Each is a **file name** in the same folder (no paths), matching `^[A-Za-z0-9][A-Za-z0-9._-]{0,63}\.(png|jpg|jpeg|webp|svg)$`. Every file named here must be in the folder. |
+| `images` | Object with any of `icon`, `iconDark`, `logo`, `logoDark`, `background`. Each is a **file name** in the same folder (no paths), matching `^[A-Za-z0-9][A-Za-z0-9._-]{0,63}\.(png|jpg|jpeg|webp|svg)$`. Every file named here must be in the folder. |
 | `font` | Object `{ "file": "…", "use": "headings" | "all" }`. `file` matches the same file-name rule but must end in `.woff2`, `.woff`, `.ttf` or `.otf`, and must be in the folder. `use` defaults to `"headings"`. |
 | `effect` | One of `"none"` (default), `"snow"`, `"leaves"`, `"bats"`, `"confetti"`. Nothing else. |
 | `copy` | Object of wording keys (below). Each value is a string (1–500 characters) or an array of 1–20 such strings. **Only the keys listed below are allowed**; any other key makes the whole theme invalid. |
@@ -78,12 +78,15 @@ Defaults (the original Yoink look): `ink #2a2742`, `lilac #b9a4fa`, `peach #fddf
 
 ## Images
 
-All optional. While the theme is on, theme images replace the app's Branding images.
+All optional. While the theme is on, theme images replace the app's Branding images. If your `icon` / `logo` is dark,
+also provide `iconDark` / `logoDark` (light-coloured) so it shows up on dark areas; if it works on both, skip them.
 
 | Key | What it is | Shape |
 | --- | --- | --- |
 | `icon` | Square app icon: browser tab, next to the app name | Square (1:1). Must read clearly at 32 px. |
 | `logo` | Landscape logo that already includes the name; replaces icon + name in the sidebar, top bar and sign-in screens | Wide, about 4:1, shown 40–48 px high. |
+| `iconDark` | Version of `icon` for dark backgrounds (the desktop sign-in panel is `ink`-coloured). Falls back to `icon`. | Square, light-coloured artwork. |
+| `logoDark` | Version of `logo` for dark backgrounds. Falls back to `logo`. | Wide, light-coloured artwork. |
 | `background` | Behind the whole app, covering the page (cards sit on top) | Subtle, light, low-contrast so text stays readable. A soft pattern or gentle gradient. |
 
 **You can write SVG files yourself.** Uploaded SVGs are cleaned by the app; only these survive, so stick to them:
@@ -159,7 +162,7 @@ wants a tidy look).
 | `notifyMarkAll` | Dropdown button | Mark all as read | none | **≤ 20 chars** |
 | `outbidEmailSubject` | Subject of the "you've been outbid" email | You've been outbid on Lot {lot}: {title} | `{lot}` `{title}` `{amount}` `{minBid}` `{name}` | ≤ 70 chars |
 | `outbidEmailBody` | Opening line of that email (the app adds the link, closing time and sign-off) | Someone has bid {amount} on Lot {lot} ({title}), so you're no longer the highest bidder. | `{lot}` `{title}` `{amount}` `{minBid}` `{name}` | ≤ 250 chars, plain text |
-| `digestEmailSubject` | Subject of the daily "new items" email | {items} in {auction} | `{items}` (e.g. "3 new items"), `{count}`, `{auction}` (event name), `{name}` | ≤ 70 chars |
+| `digestEmailSubject` | Subject of the daily "new items" email | {items} in {auction} | `{items}` (e.g. "3 new items"), `{count}`, `{auction}` (the app's name), `{name}` | ≤ 70 chars |
 | `digestEmailIntro` | Line before the list in that email | Here's what's been added since the last update: | `{count}` `{name}` | ≤ 120 chars, plain text |
 
 ### Writing the wording

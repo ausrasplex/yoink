@@ -16,7 +16,7 @@ type Props = {
   next: string;
   needsAccessCode?: boolean;
   canReset?: boolean;
-  /** Branding name (falls back to the auction name) and optional slogan. */
+  /** Branding name and optional slogan. */
   brand: string;
   slogan?: string | null;
 };

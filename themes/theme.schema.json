@@ -62,7 +62,15 @@
           "type": "string",
           "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}\\.(png|jpe?g|webp|svg|woff2?|ttf|otf)$"
         },
+        "iconDark": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}\\.(png|jpe?g|webp|svg|woff2?|ttf|otf)$"
+        },
         "logo": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}\\.(png|jpe?g|webp|svg|woff2?|ttf|otf)$"
+        },
+        "logoDark": {
           "type": "string",
           "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}\\.(png|jpe?g|webp|svg|woff2?|ttf|otf)$"
         },

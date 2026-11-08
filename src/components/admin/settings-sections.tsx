@@ -119,7 +119,7 @@ export function NotificationsForm({ head, emailEnabled, notifyOutbid, emailPassw
         <Check name="emailPasswordReset" defaultChecked={emailPasswordReset} label="Password reset emails"
           hint={'Powers "Forgot password?" on the sign-in page. Off hides the link; people ask an admin to reset it instead.'} />
         <Check name="emailNewItems" defaultChecked={emailNewItems} label="Daily new items email"
-          hint="One email a day to every user listing the items added since the last one (skipped when there's nothing new). Users can opt out in their settings." />
+          hint="One email a day to every user listing the items added since the last one (skipped when there's nothing new). Users can opt out on their Account page." />
         <div className="flex flex-wrap items-center gap-2 pl-12">
           <Label htmlFor="digestHour" className="text-sm font-medium">Send at</Label>
           <Select name="digestHour" defaultValue={String(digestHour)}>

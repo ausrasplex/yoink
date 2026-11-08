@@ -63,48 +63,46 @@ const brandingSchema = z.object({
 });
 
 /** Server admin: the name and logo shown in the sidebar, sign-in screens, browser tab and emails. */
+/** The four Branding images: icon and landscape logo, each for light and dark backgrounds. */
+const BRAND_IMAGES = ["appLogo", "appLogoDark", "appLogoWide", "appLogoWideDark"] as const;
+type BrandImage = (typeof BRAND_IMAGES)[number];
+
 export async function saveBrandingAction(_: SettingsState, form: FormData): Promise<SettingsState> {
   await requireServerAdmin();
   const parsed = brandingSchema.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { error: parsed.error.issues[0].message };
   const current = await db.auction.upsert({ where: { id: 1 }, update: {}, create: { id: 1 } });
-  const data: { appName: string | null; appSlogan: string | null; appLogo?: string | null; appLogoWide?: string | null } = {
+  const data: { appName: string | null; appSlogan: string | null } & Partial<Record<BrandImage, string | null>> = {
     appName: parsed.data.appName || null,
     appSlogan: parsed.data.appSlogan || null,
   };
 
-  // Icon (square) and logo (landscape): same rules as any logo upload (SVGs are sanitised).
-  for (const [field, key] of [["appLogo", "appLogo"], ["appLogoWide", "appLogoWide"]] as const) {
-    const file = form.get(field);
+  // Same rules as any logo upload (SVGs are sanitised). If one fails, the ones already saved this time are removed.
+  for (const key of BRAND_IMAGES) {
+    const file = form.get(key);
     if (!(file instanceof File) || file.size === 0) continue;
     try {
       data[key] = await saveLogo(file);
     } catch (e) {
-      if (data.appLogo && key === "appLogoWide") await deleteImageFile(data.appLogo); // don't leave a half-saved upload
+      await Promise.all(BRAND_IMAGES.map((k) => (data[k] ? deleteImageFile(data[k]!) : null)));
       return { error: e instanceof Error ? e.message : "Upload failed." };
     }
   }
   await update(data);
-  if (data.appLogo !== undefined && current.appLogo) await deleteImageFile(current.appLogo);
-  if (data.appLogoWide !== undefined && current.appLogoWide) await deleteImageFile(current.appLogoWide);
+  for (const key of BRAND_IMAGES) if (data[key] !== undefined && current[key]) await deleteImageFile(current[key]!);
   return { saved: true };
 }
 
-
-/** Server admin: remove the app logo (the bin button on the Branding logo). */
-export async function removeAppLogoAction(): Promise<void> {
+/** Server admin: remove one Branding image (the bin button on it). Falls back as described in brandImages(). */
+export async function removeBrandImageAction(key: BrandImage): Promise<void> {
   await requireServerAdmin();
+  if (!BRAND_IMAGES.includes(key)) return;
   const current = await db.auction.upsert({ where: { id: 1 }, update: {}, create: { id: 1 } });
-  if (!current.appLogo) return;
-  await update({ appLogo: null });
-  await deleteImageFile(current.appLogo);
+  const file = current[key];
+  if (!file) return;
+  await update({ [key]: null });
+  await deleteImageFile(file);
 }
 
-/** Server admin: remove the landscape logo (the bin button on it). The icon + name show again. */
-export async function removeAppLogoWideAction(): Promise<void> {
-  await requireServerAdmin();
-  const current = await db.auction.upsert({ where: { id: 1 }, update: {}, create: { id: 1 } });
-  if (!current.appLogoWide) return;
-  await update({ appLogoWide: null });
-  await deleteImageFile(current.appLogoWide);
-}
+
+

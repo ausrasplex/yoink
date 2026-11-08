@@ -65,7 +65,7 @@ export default async function UsersPage() {
             icon: <UserPlus className="size-5" />,
             title: "Add a user",
             desc: auction.registrationOpen
-              ? "Guests can also register themselves (change this under Auction Setup)."
+              ? "Guests can also register themselves (change this under Settings)."
               : "Self-registration is off, so this is the only way to create accounts.",
           }}
         />
