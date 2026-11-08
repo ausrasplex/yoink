@@ -1,0 +1,175 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+  SERVER_ADMIN // exactly one: the first account; runs server settings and invites admins
+}
+
+model User {
+  id                 String          @id @default(cuid())
+  email              String          @unique
+  name               String
+  passwordHash       String
+  role               Role            @default(USER)
+  shift              String?
+  mustChangePassword Boolean         @default(false)
+  avatar             String? // uploaded image file name (raster only), shown instead of initials
+  emailDigest        Boolean         @default(true) // receive the daily new-items digest (if Admins have it on)
+  createdAt          DateTime        @default(now())
+  sessions           Session[]
+  bids               Bid[]
+  leading            Item[]          @relation("HighBidder")
+  passwordResets     PasswordReset[]
+  invitesSent        Invite[]        @relation("InvitesSent")
+  bidArchives        BidArchive[]
+}
+
+model Session {
+  id         String   @id @default(cuid())
+  tokenHash  String   @unique
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  lastSeenAt DateTime @default(now())
+  userAgent  String?
+  ip         String?
+
+  @@index([userId])
+}
+
+// Single-row table (id = 1) holding event-wide settings.
+model Auction {
+  id   Int    @id @default(1)
+  name String @default("Silent Auction")
+  // (Bidding windows are per item now: see Item.startsAt / endsAt.)
+
+  // Server branding (server admin only). appName falls back to the auction name when empty.
+  appName String?
+  appLogo String?
+  theme   String  @default("yoink") // "yoink" | "britney" — see src/lib/themes.ts
+
+  registrationOpen Boolean @default(true)
+  terms            String  @default("")
+  qrLogo           String?
+  qrColor          String  @default("#2a2742")
+
+  // Login attempt limiting
+  maxLoginAttempts Int @default(5)
+  lockoutMinutes   Int @default(15)
+
+  // Which emails go out — Admins' choice (Auction setup → Notifications). emailEnabled is the master switch.
+  emailEnabled       Boolean   @default(true)
+  emailPasswordReset Boolean   @default(true)
+  emailNewItems      Boolean   @default(false) // daily digest of new listings, to Users
+  digestHour         Int       @default(9) // local hour (venue time zone) the digest goes out
+  lastDigestAt       DateTime? // when the last digest run claimed its slot; the next one covers items since then
+  notifyOutbid       Boolean   @default(false)
+
+  // SMTP connection — Server Admin's settings. The password is stored AES-256-GCM encrypted.
+  smtpHost    String?
+  smtpPort    Int     @default(587)
+  smtpSecure  Boolean @default(false)
+  smtpUser    String?
+  smtpPassEnc String?
+  smtpFrom    String?
+}
+
+model LoginAttempt {
+  key         String    @id // "email:<addr>" or "ip:<addr>"
+  failures    Int       @default(0)
+  windowStart DateTime  @default(now())
+  lockedUntil DateTime?
+}
+
+model Item {
+  id           String       @id @default(cuid())
+  lot          Int          @unique @default(autoincrement())
+  title        String
+  description  String       @default("")
+  startingBid  Int // whole dollars
+  minIncrement Int          @default(5)
+  currentBid   Int? // null until the first bid
+  highBidderId String?
+  highBidder   User?        @relation("HighBidder", fields: [highBidderId], references: [id], onDelete: SetNull)
+  createdAt    DateTime     @default(now())
+  images       ItemImage[]
+  bids         Bid[]
+  bidArchives  BidArchive[]
+
+  // Each item is its own listing with its own bidding window (UTC). Admins set both; see src/lib/listing.ts.
+  startsAt         DateTime
+  endsAt           DateTime
+  hiddenUntilStart Boolean   @default(false) // true: Users can't see it before startsAt; false: shows "Starts in…"
+  claimedAt        DateTime? // set by the winner ("Claimed" on My Bids) once they've collected it
+
+  @@index([endsAt])
+}
+
+model ItemImage {
+  id       String @id @default(cuid())
+  itemId   String
+  item     Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  filename String
+  position Int    @default(0)
+
+  @@index([itemId])
+}
+
+model Bid {
+  id        String   @id @default(cuid())
+  itemId    String
+  item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount    Int
+  createdAt DateTime @default(now())
+
+  @@index([itemId, amount])
+  @@index([userId])
+}
+
+model PasswordReset {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+// Single-use link the server admin sends to make someone an admin.
+model Invite {
+  id          String   @id @default(cuid())
+  email       String
+  name        String
+  tokenHash   String   @unique
+  invitedById String?
+  invitedBy   User?    @relation("InvitesSent", fields: [invitedById], references: [id], onDelete: SetNull)
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  @@index([email])
+}
+
+// A bidder tidied an ended item they didn't win out of My Bids (Archive). Winners use Item.claimedAt instead.
+model BidArchive {
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  itemId    String
+  item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([userId, itemId])
+  @@index([itemId])
+}

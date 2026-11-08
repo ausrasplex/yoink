@@ -1,0 +1,14 @@
+{
+  "name": "auction-e2e",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "for f in 0*.mjs; do echo \"== $f\"; node \"$f\" || exit 1; done"
+  },
+  "dependencies": {
+    "jsqr": "^1.4.0",
+    "playwright": "^1.65.0",
+    "pngjs": "^7.0.0",
+    "smtp-server": "^3.21.3"
+  }
+}

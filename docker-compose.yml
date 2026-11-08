@@ -1,0 +1,41 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: auction
+      POSTGRES_PASSWORD: auction
+      POSTGRES_DB: auction
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U auction"]
+      interval: 5s
+      retries: 10
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://auction:auction@db:5432/auction
+      # Address guests will scan to (LAN IP or domain) - QR codes are built from this
+      APP_URL: ${APP_URL:-http://localhost:3000}
+      # Keep "true" behind HTTPS; use "false" if serving plain http on a LAN
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      APP_SECRET: ${APP_SECRET:?set APP_SECRET (16+ random characters)}
+      ACCESS_CODE: ${ACCESS_CODE:-}
+      # Optional: create the server admin on start. Leave unset to create it at /setup on first visit.
+      SERVER_ADMIN_EMAIL: ${SERVER_ADMIN_EMAIL:-}
+      SERVER_ADMIN_PASSWORD: ${SERVER_ADMIN_PASSWORD:-}
+      SERVER_ADMIN_NAME: ${SERVER_ADMIN_NAME:-Server admin}
+    volumes:
+      - uploads:/data/uploads
+
+volumes:
+  pgdata:
+  uploads:

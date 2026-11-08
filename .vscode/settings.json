@@ -1,0 +1,9 @@
+{
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "files.associations": { "*.css": "tailwindcss" },
+    "editor.quickSuggestions": { "strings": "on" },
+    "[prisma]": {
+        "editor.defaultFormatter": "Prisma.prisma"
+    },
+    "prisma.pinToPrisma6": true
+}

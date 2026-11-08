@@ -1,0 +1,74 @@
+"use client";
+
+import Link from "next/link";
+import { Bell, LogOut, Search } from "lucide-react";
+import { BrandMark } from "@/components/brand-mark";
+import { UserAvatar } from "@/components/user-avatar";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { logoutAction } from "@/app/actions";
+import type { Role } from "@/lib/format";
+
+export function Brand({ name, logo }: { name: string; logo: string | null }) {
+  return (
+    <Link href="/" className="flex min-w-0 items-center gap-2.5 font-extrabold tracking-tight text-ink">
+      <BrandMark logo={logo} className="size-9 bg-ink text-lime" iconClassName="size-[18px]" />
+      <span className="line-clamp-2 text-base leading-tight">{name}</span>
+    </Link>
+  );
+}
+
+export function TopBar(p: {
+  brand: string; logo: string | null; name: string; email: string; avatar: string | null; role: Role; alert: boolean;
+}) {
+  const bidder = p.role !== "SERVER_ADMIN"; // the server admin has no items to search or bids to watch
+  return (
+    <header className="flex items-center gap-3 px-4 py-4 lg:px-10 lg:py-6">
+      <div className="min-w-0 lg:hidden"><Brand name={p.brand} logo={p.logo} /></div>
+      {bidder && <form action="/items" method="get" role="search" className="relative ml-auto hidden max-w-sm flex-1 sm:block lg:ml-0">
+        <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <input
+          name="q"
+          type="search"
+          placeholder="Search items or lot number…"
+          aria-label="Search items"
+          className="h-11 w-full rounded-xl border border-transparent bg-white pl-10 pr-4 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40"
+        />
+      </form>}
+      <div className="ml-auto flex items-center gap-2">
+        {bidder && <>
+        <Link href="/items" aria-label="Search" className="grid size-10 place-items-center rounded-full bg-white sm:hidden">
+          <Search className="size-[18px]" />
+        </Link>
+        <Link
+          href="/bids"
+          aria-label={p.alert ? "You have been outbid" : "My bids"}
+          className="relative grid size-10 place-items-center rounded-full bg-white transition-colors hover:bg-white/70"
+        >
+          <Bell className="size-[18px]" />
+          {p.alert && <span className="absolute right-2.5 top-2.5 size-2.5 rounded-full bg-destructive ring-2 ring-white" />}
+        </Link>
+        </>}
+        <DropdownMenu>
+          <DropdownMenuTrigger className="rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50" aria-label="Account menu">
+            <UserAvatar name={p.name} avatar={p.avatar} className="size-10" textClassName="text-sm" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-60">
+            <DropdownMenuLabel className="font-normal">
+              <p className="truncate text-sm font-bold">{p.name}</p>
+              <p className="truncate text-xs text-muted-foreground">{p.email}</p>
+            </DropdownMenuLabel>
+            {/* Pages live in the sidebar / bottom nav; the account menu only signs out. */}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <form action={logoutAction}>
+                <button type="submit" className="flex w-full items-center gap-2"><LogOut className="size-4" /> Log out</button>
+              </form>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </header>
+  );
+}
