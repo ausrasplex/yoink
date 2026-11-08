@@ -3,6 +3,7 @@ import { AuthShell } from "@/components/auth-shell";
 import { AuthForm } from "@/components/auth-form";
 import { getUser, hasServerAdmin, safeNext } from "@/lib/auth";
 import { getAuction } from "@/lib/auction";
+import { brandName } from "@/lib/format";
 import { emailStatus } from "@/lib/mail";
 import { loginAction } from "@/app/actions";
 
@@ -13,7 +14,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const auction = await getAuction();
   return (
     <AuthShell>
-      <AuthForm mode="login" action={loginAction} next={next} canReset={(await emailStatus("passwordReset")) === "ready"} auctionName={auction.name} />
+      <AuthForm mode="login" action={loginAction} next={next} canReset={(await emailStatus("passwordReset")) === "ready"} brand={brandName(auction)} slogan={auction.appSlogan} />
     </AuthShell>
   );
 }

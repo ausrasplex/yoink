@@ -11,14 +11,14 @@ export async function AppShell({ user, children }: { user: ShellUser; children: 
     // Full-width frame: the sidebar sits on the left edge; the top bar and page share one centred content container.
     <div className="min-h-dvh w-full lg:flex">
       <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col border-r border-border/70 px-6 py-8 lg:flex">
-        <div className="mb-10"><Brand name={info.name} logo={info.logo} /></div>
+        <div className="mb-10"><Brand name={info.name} logo={info.logo} logoWide={info.logoWide} /></div>
         <div className="flex-1 overflow-y-auto"><SidebarNav role={user.role} /></div>
       </aside>
       {/* overflow-x-clip: if anything is ever too wide, clip it here instead of widening the whole page on phones
           (a wider page also drags the fixed bottom nav off-screen) */}
       <div className="min-w-0 flex-1 overflow-x-clip">
         <div className="mx-auto w-full max-w-7xl">
-          <TopBar brand={info.name} logo={info.logo} name={user.name} email={user.email} avatar={user.avatar ?? null} role={user.role} alert={info.outbid > 0} />
+          <TopBar brand={info.name} logo={info.logo} logoWide={info.logoWide} name={user.name} email={user.email} avatar={user.avatar ?? null} role={user.role} alert={info.outbid > 0} />
           <main className="px-4 pb-28 pt-2 lg:px-10 lg:pb-12">{children}</main>
         </div>
       </div>

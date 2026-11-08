@@ -11,10 +11,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FileInput } from "@/components/ui/file-input";
 import { Label } from "@/components/ui/label";
-import { removeAppLogoAction, saveBrandingAction, saveSmtpAction, saveThemeAction, testEmailAction, type SettingsState } from "@/app/server/actions";
+import { removeAppLogoAction, removeAppLogoWideAction, saveBrandingAction, saveSmtpAction, saveThemeAction, testEmailAction, type SettingsState } from "@/app/server/actions";
 import { THEMES, type ThemeId } from "@/lib/themes";
 
-export function BrandingForm({ head, appName, auctionName, logo }: { head: SectionHead; appName: string | null; auctionName: string; logo: string | null }) {
+const IMAGE_TYPES = "image/svg+xml,.svg,.svgz,image/png,image/jpeg,image/webp";
+
+export function BrandingForm({ head, appName, appSlogan, auctionName, logo, logoWide }: {
+  head: SectionHead; appName: string | null; appSlogan: string | null; auctionName: string; logo: string | null; logoWide: string | null;
+}) {
   const [state, action, pending] = useActionState(saveBrandingAction, undefined);
   const id = useId();
   const a = { form: id, pending, status: <Status state={state} /> };
@@ -28,22 +32,56 @@ export function BrandingForm({ head, appName, auctionName, logo }: { head: Secti
           Shown in the sidebar, sign-in screens, browser tab and emails. Leave blank to use the auction name ({auctionName}).
         </p>
       </div>
-      <div className="flex flex-wrap items-end gap-x-6 gap-y-4">
-        <div className="relative">
-          <BrandMark logo={logo} className="size-14 bg-ink text-lime" iconClassName="size-6" />
-          {logo && (
-            <RemoveImageButton
-              label="Remove logo"
-              confirm={{ title: "Remove the app logo?", description: "The default gavel icon is shown instead, including in the browser tab.", confirmLabel: "Remove logo" }}
-              onRemove={removeAppLogoAction}
-            />
-          )}
+      <div className="space-y-2">
+        <Label htmlFor="appSlogan">Slogan <span className="font-normal text-muted-foreground">(optional)</span></Label>
+        <Input id="appSlogan" name="appSlogan" defaultValue={appSlogan ?? ""} maxLength={120} placeholder="e.g. Bid big, give bigger." />
+        <p className="text-xs text-muted-foreground">
+          A short line shown under the name on the sign-in screens, as their big headline, and as the description in link previews.
+        </p>
+      </div>
+      <div className="grid gap-6 border-t pt-5 lg:grid-cols-2">
+        {/* Icon (square): browser tab, home-screen and compact spots. */}
+        <div className="flex flex-wrap items-end gap-x-5 gap-y-4">
+          <div className="relative">
+            <BrandMark logo={logo} className="size-14" />
+            {logo && (
+              <RemoveImageButton
+                label="Remove icon"
+                confirm={{ title: "Remove the app icon?", description: "The default Yoink icon is shown instead, including in the browser tab.", confirmLabel: "Remove icon" }}
+                onRemove={removeAppLogoAction}
+              />
+            )}
+          </div>
+          <div className="w-full min-w-0 space-y-2 sm:w-auto">
+            <Label htmlFor="appLogo" className="block leading-snug">
+              Icon (square) <span className="block font-normal text-muted-foreground">SVG, PNG, JPEG or WebP, under 2 MB. Browser tab and next to the name.</span>
+            </Label>
+            <FileInput id="appLogo" name="appLogo" accept={IMAGE_TYPES} className="sm:w-72" placeholder={logo ? "Choose a new icon" : undefined} />
+          </div>
         </div>
-        <div className="w-full min-w-0 space-y-2 sm:w-auto">
-          <Label htmlFor="appLogo" className="block leading-snug">
-            {logo ? "Replace logo" : "Logo"} <span className="block font-normal text-muted-foreground sm:inline">(SVG, PNG, JPEG or WebP, square, under 2 MB)</span>
-          </Label>
-          <FileInput id="appLogo" name="appLogo" accept="image/svg+xml,.svg,.svgz,image/png,image/jpeg,image/webp" className="sm:w-80" />
+        {/* Logo (landscape): replaces icon + name where there's room. */}
+        <div className="flex flex-wrap items-end gap-x-5 gap-y-4">
+          <div className="relative grid h-14 w-40 place-items-center rounded-xl border border-dashed border-border bg-canvas px-2">
+            {logoWide ? (
+              // eslint-disable-next-line @next/next/no-img-element -- small preview from our own route
+              <img src={`/brand/wordmark?v=${logoWide}`} alt="Landscape logo" className="max-h-11 max-w-full object-contain" />
+            ) : (
+              <span className="text-xs text-muted-foreground">No landscape logo</span>
+            )}
+            {logoWide && (
+              <RemoveImageButton
+                label="Remove landscape logo"
+                confirm={{ title: "Remove the landscape logo?", description: "The icon and app name are shown instead.", confirmLabel: "Remove logo" }}
+                onRemove={removeAppLogoWideAction}
+              />
+            )}
+          </div>
+          <div className="w-full min-w-0 space-y-2 sm:w-auto">
+            <Label htmlFor="appLogoWide" className="block leading-snug">
+              Logo (landscape) <span className="block font-normal text-muted-foreground">Optional. Wide logo with the name in it; replaces icon + name in the sidebar, top bar and sign-in screens.</span>
+            </Label>
+            <FileInput id="appLogoWide" name="appLogoWide" accept={IMAGE_TYPES} className="sm:w-72" placeholder={logoWide ? "Choose a new logo" : undefined} />
+          </div>
         </div>
       </div>
       <FormActions where="footer" {...a} />

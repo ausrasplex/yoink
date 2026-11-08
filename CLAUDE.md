@@ -54,7 +54,8 @@ src/app/           routes
   page.tsx (dashboard), items/, lot/[lot]/ (item + bid panel), bids/, settings/ (user), account/password/
   login, register, forgot-password, reset-password/[token], setup (first run: creates the server admin), invite/[token]
   server/ (server admin: page.tsx settings, admins/[id], actions.ts branding+SMTP, admin-actions.ts invites)
-  brand/logo (public route serving the app logo — the only upload served without sign-in)
+  brand/logo + brand/wordmark (public routes for the Branding icon and landscape logo — the only uploads served without
+  sign-in; both go through serveBrandFile in src/lib/brand-file.ts)
   admin/page.tsx (Manage items + search), admin/items/[id] (edit + QR card), admin/history, admin/users[/id],
   admin/qr (sheet + customise), admin/settings (auction setup), admin/export (CSV)
   admin/user-actions.ts is shared by /admin/users (admin → USERs) and /server/admins (server admin → ADMINs)
@@ -65,7 +66,7 @@ src/components/    shell/ (AppShell, sidebar, top bar, mobile nav), admin/, sett
 
 ## Data model (short)
 User(role USER|ADMIN|SERVER_ADMIN, shift?, mustChangePassword, avatar?) · Session(tokenHash, expiresAt, lastSeenAt, userAgent, ip) ·
-Auction (single row id=1: name, registrationOpen, terms, login limits, SMTP fields, qrLogo, qrColor, appName?, appLogo?, theme, emailEnabled, emailPasswordReset) ·
+Auction (single row id=1: name, registrationOpen, terms, login limits, SMTP fields, qrLogo, qrColor, appName?, appLogo? (icon), appLogoWide? (landscape), appSlogan?, theme, emailEnabled, emailPasswordReset) ·
 Invite(email, name, tokenHash, expiresAt — admin invites, single use, 7 days) ·
 Item(lot autoincrement, startingBid, minIncrement, currentBid?, highBidderId?, startsAt, endsAt, hiddenUntilStart) · ItemImage · Bid · LoginAttempt · PasswordReset.
 Money is **whole dollars** (Int).
@@ -100,7 +101,9 @@ Money is **whole dollars** (Int).
   pills and badges stay `rounded-full`. Don't use arbitrary `rounded-[…]` values.
 - **Dropdowns:** use the themed `Select` (`src/components/ui/select.tsx`; `variant="soft"` for toolbars), never a native `<select>`.
   Radix items can't have an empty value — use a sentinel like `"__all"`.
-- **Favicon:** comes from the Branding logo via `generateMetadata` in `src/app/layout.tsx`; the default is `public/favicon.ico`.
+- **Icons:** the source artwork is `assets/yoink-icon.png`; `node assets/make-icons.mjs` regenerates `unraid/icon.png`,
+  `public/brand-default.png` (default in-app logo), `public/favicon.ico`, `icon-512.png` and `apple-touch-icon.png`.
+  The Branding logo replaces them in-app and in the tab via `BrandMark` and `generateMetadata` in `src/app/layout.tsx`.
   Don't add `src/app/favicon.ico` back (Next would always link it and browsers prefer it).
 - **File inputs:** use `FileInput` (`src/components/ui/file-input.tsx`), not a bare `<Input type="file">` (the browser's own
   control doesn't line up). It wraps a real file input, so forms submit it normally and e2e `setInputFiles('#id')` still works.
@@ -113,7 +116,7 @@ Money is **whole dollars** (Int).
 - **React 19 resets uncontrolled form fields after a server action** — use `defaultValue` from returned state if a field must persist.
 - Don't export helpers from `"use client"` files for server use; put shared pure helpers in `src/lib/format.ts`.
 - Theme: CSS vars in `src/app/globals.css` — `--ink #2a2742` (navy), `--lilac #b9a4fa`, `--peach #fddfba`, `--lime #e9f94c`,
-  `--canvas #f1f1f3`; Manrope font; `rounded-3xl` white cards; pill buttons (variants incl. `lime`, `lilac`, `soft`); Badge variants `lime`/`lilac`/`peach`.
+  `--canvas #f1f1f3`; Plus Jakarta Sans font; `rounded-3xl` white cards; pill buttons (variants incl. `lime`, `lilac`, `soft`); Badge variants `lime`/`lilac`/`peach`.
 - Layout: `AppShell` (sticky sidebar ≥lg, top bar with search, mobile bottom nav) + `PageTitle`. Keep pages free of horizontal scroll at 320px wide.
 - Avoid inventing marketing copy in the UI.
 

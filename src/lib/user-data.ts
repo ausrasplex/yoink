@@ -54,5 +54,5 @@ export async function getShellInfo(userId: string) {
     // only listings still open: nothing can be done about an ended one
     db.item.count({ where: { bids: { some: { userId } }, NOT: { highBidderId: userId }, endsAt: { gt: new Date() } } }),
   ]);
-  return { name: brandName(auction), logo: auction.appLogo, outbid };
+  return { name: brandName(auction), logo: auction.appLogo, logoWide: auction.appLogoWide, outbid };
 }

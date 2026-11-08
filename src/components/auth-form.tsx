@@ -16,10 +16,12 @@ type Props = {
   next: string;
   needsAccessCode?: boolean;
   canReset?: boolean;
-  auctionName: string;
+  /** Branding name (falls back to the auction name) and optional slogan. */
+  brand: string;
+  slogan?: string | null;
 };
 
-export function AuthForm({ mode, action, next, needsAccessCode, canReset, auctionName }: Props) {
+export function AuthForm({ mode, action, next, needsAccessCode, canReset, brand, slogan }: Props) {
   const [state, formAction, pending] = useActionState(action, undefined);
   const isLogin = mode === "login";
   const other = `${isLogin ? "/register" : "/login"}?next=${encodeURIComponent(next)}`;
@@ -28,7 +30,8 @@ export function AuthForm({ mode, action, next, needsAccessCode, canReset, auctio
     <>
       <Card>
         <CardHeader>
-          <CardTitle>{auctionName}</CardTitle>
+          <CardTitle>{brand}</CardTitle>
+          {slogan && <p className="text-sm font-semibold text-ink/70">{slogan}</p>}
           <CardDescription>
             {isLogin ? "Sign in to view items and place bids." : "Create an account to start bidding."}
           </CardDescription>

@@ -59,7 +59,7 @@ export default async function ServerSettingsPage() {
             />
           </div>
         </SectionCard>
-        <BrandingForm head={{ icon: <Palette className="size-5" />, title: "Branding" }} appName={a.appName} auctionName={a.name} logo={a.appLogo} />
+        <BrandingForm head={{ icon: <Palette className="size-5" />, title: "Branding" }} appName={a.appName} appSlogan={a.appSlogan} auctionName={a.name} logo={a.appLogo} logoWide={a.appLogoWide} />
         <ThemeForm head={{ icon: <Sparkles className="size-5" />, title: "Theme", desc: "Changes the app's wording (and later its look) for everyone." }} theme={themeOf(a.theme)} />
         <SmtpForm
             head={{

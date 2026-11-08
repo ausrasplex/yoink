@@ -58,7 +58,10 @@ export async function testEmailAction(): Promise<SettingsState> {
   return res.ok ? { message: `Test email sent to ${admin.email}.` } : { error: res.error };
 }
 
-const brandingSchema = z.object({ appName: z.string().trim().max(80, "Keep the name under 80 characters.") });
+const brandingSchema = z.object({
+  appName: z.string().trim().max(80, "Keep the name under 80 characters."),
+  appSlogan: z.string().trim().max(120, "Keep the slogan under 120 characters.").optional(),
+});
 
 /** Server admin: the name and logo shown in the sidebar, sign-in screens, browser tab and emails. */
 export async function saveBrandingAction(_: SettingsState, form: FormData): Promise<SettingsState> {
@@ -66,20 +69,25 @@ export async function saveBrandingAction(_: SettingsState, form: FormData): Prom
   const parsed = brandingSchema.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { error: parsed.error.issues[0].message };
   const current = await db.auction.upsert({ where: { id: 1 }, update: {}, create: { id: 1 } });
-  const data: { appName: string | null; appLogo?: string | null } = { appName: parsed.data.appName || null };
+  const data: { appName: string | null; appSlogan: string | null; appLogo?: string | null; appLogoWide?: string | null } = {
+    appName: parsed.data.appName || null,
+    appSlogan: parsed.data.appSlogan || null,
+  };
 
-  const file = form.get("appLogo");
-  if (file instanceof File && file.size > 0) {
+  // Icon (square) and logo (landscape): same rules as any logo upload (SVGs are sanitised).
+  for (const [field, key] of [["appLogo", "appLogo"], ["appLogoWide", "appLogoWide"]] as const) {
+    const file = form.get(field);
+    if (!(file instanceof File) || file.size === 0) continue;
     try {
-      data.appLogo = await saveLogo(file);
+      data[key] = await saveLogo(file);
     } catch (e) {
+      if (data.appLogo && key === "appLogoWide") await deleteImageFile(data.appLogo); // don't leave a half-saved upload
       return { error: e instanceof Error ? e.message : "Upload failed." };
     }
-  } else if (form.get("removeAppLogo") === "on") {
-    data.appLogo = null;
   }
   await update(data);
   if (data.appLogo !== undefined && current.appLogo) await deleteImageFile(current.appLogo);
+  if (data.appLogoWide !== undefined && current.appLogoWide) await deleteImageFile(current.appLogoWide);
   return { saved: true };
 }
 
@@ -99,4 +107,13 @@ export async function removeAppLogoAction(): Promise<void> {
   if (!current.appLogo) return;
   await update({ appLogo: null });
   await deleteImageFile(current.appLogo);
+}
+
+/** Server admin: remove the landscape logo (the bin button on it). The icon + name show again. */
+export async function removeAppLogoWideAction(): Promise<void> {
+  await requireServerAdmin();
+  const current = await db.auction.upsert({ where: { id: 1 }, update: {}, create: { id: 1 } });
+  if (!current.appLogoWide) return;
+  await update({ appLogoWide: null });
+  await deleteImageFile(current.appLogoWide);
 }

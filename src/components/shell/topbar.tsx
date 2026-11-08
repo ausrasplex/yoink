@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Bell, LogOut, Search } from "lucide-react";
-import { BrandMark } from "@/components/brand-mark";
+import { BrandLockup } from "@/components/brand-mark";
 import { UserAvatar } from "@/components/user-avatar";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -10,22 +10,21 @@ import {
 import { logoutAction } from "@/app/actions";
 import type { Role } from "@/lib/format";
 
-export function Brand({ name, logo }: { name: string; logo: string | null }) {
+export function Brand({ name, logo, logoWide }: { name: string; logo: string | null; logoWide: string | null }) {
   return (
-    <Link href="/" className="flex min-w-0 items-center gap-2.5 font-extrabold tracking-tight text-ink">
-      <BrandMark logo={logo} className="size-9 bg-ink text-lime" iconClassName="size-[18px]" />
-      <span className="line-clamp-2 text-base leading-tight">{name}</span>
+    <Link href="/" className="flex min-w-0 items-center font-extrabold tracking-tight text-ink">
+      <BrandLockup name={name} logo={logo} logoWide={logoWide} nameClassName="text-base" />
     </Link>
   );
 }
 
 export function TopBar(p: {
-  brand: string; logo: string | null; name: string; email: string; avatar: string | null; role: Role; alert: boolean;
+  brand: string; logo: string | null; logoWide: string | null; name: string; email: string; avatar: string | null; role: Role; alert: boolean;
 }) {
   const bidder = p.role !== "SERVER_ADMIN"; // the server admin has no items to search or bids to watch
   return (
     <header className="flex items-center gap-3 px-4 py-4 lg:px-10 lg:py-6">
-      <div className="min-w-0 lg:hidden"><Brand name={p.brand} logo={p.logo} /></div>
+      <div className="min-w-0 lg:hidden"><Brand name={p.brand} logo={p.logo} logoWide={p.logoWide} /></div>
       {bidder && <form action="/items" method="get" role="search" className="relative ml-auto hidden max-w-sm flex-1 sm:block lg:ml-0">
         <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
         <input

@@ -53,9 +53,11 @@ model Auction {
   // (Bidding windows are per item now: see Item.startsAt / endsAt.)
 
   // Server branding (server admin only). appName falls back to the auction name when empty.
-  appName String?
-  appLogo String?
-  theme   String  @default("yoink") // "yoink" | "britney" — see src/lib/themes.ts
+  appName     String?
+  appLogo     String? // square icon: tab icon, compact spots
+  appLogoWide String? // landscape logo: replaces icon + name in the sidebar, top bar and sign-in screens
+  appSlogan   String? // short tagline shown under the name (sign-in screens, page description)
+  theme       String  @default("yoink") // "yoink" | "britney" — see src/lib/themes.ts
 
   registrationOpen Boolean @default(true)
   terms            String  @default("")

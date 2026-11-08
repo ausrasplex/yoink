@@ -5,6 +5,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 import { AuthForm } from "@/components/auth-form";
 import { getUser, hasServerAdmin, safeNext } from "@/lib/auth";
 import { getAuction } from "@/lib/auction";
+import { brandName } from "@/lib/format";
 import { registerAction } from "@/app/actions";
 
 export default async function RegisterPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
@@ -17,7 +18,7 @@ export default async function RegisterPage({ searchParams }: { searchParams: Pro
       <AuthShell>
         <Card>
           <CardHeader>
-            <CardTitle>{auction.name}</CardTitle>
+            <CardTitle>{brandName(auction)}</CardTitle>
             <CardDescription>
               Online registration is closed. Please ask an organiser to create your account, then{" "}
               <Link href={`/login?next=${encodeURIComponent(next)}`} className="underline underline-offset-4">sign in</Link>.
@@ -34,7 +35,8 @@ export default async function RegisterPage({ searchParams }: { searchParams: Pro
         action={registerAction}
         next={next}
         needsAccessCode={!!process.env.ACCESS_CODE}
-        auctionName={auction.name}
+        brand={brandName(auction)}
+        slogan={auction.appSlogan}
       />
     </AuthShell>
   );

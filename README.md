@@ -103,7 +103,8 @@ can look around (**replaces** items, bids and user accounts, so never run it on 
 - **Profile pictures:** everyone (user, admin, server admin) can add one under **Settings → Profile** (JPEG, PNG or WebP, up to
   5 MB; no SVG). Shown instead of initials in the top bar, Users/Admins lists and bid history.
 - **Server → Branding:** (server admin) app name (falls back to the auction name) and logo (SVG, PNG, JPEG or WebP), shown in the sidebar,
-  sign-in screens, browser tab and emails. The logo is served publicly at `/brand/logo` so the sign-in page can show it.
+  sign-in screens, browser tab and emails. An optional **landscape logo** replaces the icon + name in the sidebar, top bar
+  and sign-in screens. Both are served publicly (`/brand/logo`, `/brand/wordmark`) so the sign-in page can show them.
 - **Users:** add users (generated temp password shown once), edit name/email/shift, reset password, unlock, delete
   (not if they've bid). Temp passwords force a change at first sign-in; a reset also signs the user out everywhere.
 

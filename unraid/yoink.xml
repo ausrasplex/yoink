@@ -2,18 +2,18 @@
 <Container version="2">
   <Name>Yoink</Name>
   <Repository>ghcr.io/ausrasplex/yoink:latest</Repository>
-  <Registry>https://github.com/ausrasplex/Yoink/pkgs/container/yoink</Registry>
+  <Registry>https://github.com/ausrasplex/yoink/pkgs/container/yoink</Registry>
   <Network>bridge</Network>
   <MyIP/>
   <Shell>sh</Shell>
   <Privileged>false</Privileged>
-  <Support>https://github.com/ausrasplex/Yoink/issues</Support>
-  <Project>https://github.com/ausrasplex/Yoink</Project>
+  <Support>https://github.com/ausrasplex/yoink/issues</Support>
+  <Project>https://github.com/ausrasplex/yoink</Project>
   <Overview>Yoink is a self-hosted silent auction. Guests scan an item's QR code, sign in and bid from their phone; each item is its own listing with its own start and end time. Admins manage items, users, QR code sheets and bid history; a server admin looks after branding, email (SMTP) and admin invites.[br][br]Uses your own PostgreSQL database (14 or newer): create an empty database and user first and put them in Database URL. Database migrations run automatically every time the container starts.[br][br]First run: open the WebUI. If you didn't fill in the Server admin settings, you'll be asked to create the server admin account (the first account), who then invites admins.</Overview>
   <Category>Productivity: Tools:</Category>
   <WebUI>http://[IP]:[PORT:3000]/</WebUI>
-  <TemplateURL>https://raw.githubusercontent.com/ausrasplex/Yoink/main/unraid/yoink.xml</TemplateURL>
-  <Icon>https://raw.githubusercontent.com/ausrasplex/Yoink/main/unraid/icon.png</Icon>
+  <TemplateURL>https://raw.githubusercontent.com/ausrasplex/yoink/main/unraid/yoink.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/ausrasplex/yoink/main/unraid/icon.png</Icon>
   <ExtraParams/>
   <PostArgs/>
   <CPUset/>
