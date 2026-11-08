@@ -25,8 +25,6 @@ DATABASE_URL="postgresql://auction:choose-a-password@192.168.1.20:5432/auction"
 APP_URL="http://localhost:3000"
 APP_SECRET="paste 16+ random characters here"    # e.g. output of: openssl rand -hex 24
 COOKIE_SECURE="false"
-SERVER_ADMIN_EMAIL="you@example.com"        # optional; leave out to create it at /setup instead
-SERVER_ADMIN_PASSWORD="something-strong"
 ```
 - Special characters in the DB password must be URL-encoded (`@` → `%40`, `#` → `%23`, `/` → `%2F`).
 - Add `?sslmode=require` to the end of `DATABASE_URL` if your server enforces SSL.
@@ -35,12 +33,11 @@ SERVER_ADMIN_PASSWORD="something-strong"
 ```bash
 npm install                 # also runs prisma generate
 npx prisma migrate deploy   # creates all tables
-npm run seed                # creates the server admin (if SERVER_ADMIN_* are set)
 npm run seed:demo           # OPTIONAL: sample items/users/bids + demo admin (wipes items, bids and user accounts — never on real data)
 npm run dev
 ```
-Open http://localhost:3000. With no server admin yet you land on **/setup** to create it; otherwise sign in with
-`SERVER_ADMIN_EMAIL` / `SERVER_ADMIN_PASSWORD`. Invite admins from **Admins**, or use the demo admin below.
+Open http://localhost:3000. The first page creates the server admin; sign in with it and invite admins from **Admins**
+(or use the demo admin below).
 Demo accounts (if seeded): user `alyssa@example.com` / `demo-password-1`, admin `admin@example.com` / `change-me-please`.
 
 ## 5. Testing from your phone

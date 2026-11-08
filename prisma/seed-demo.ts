@@ -1,7 +1,7 @@
 /**
  * Demo data for trying out the screens: `npm run seed:demo`.
  * Replaces all items, bids and user (bidder) accounts, and adds a demo admin. Do NOT run against a real event.
- * The server admin is left alone: create it first with /setup or `npm run seed`.
+ * The server admin is left alone: create it first at /setup.
  */
 import fs from "node:fs";
 import path from "node:path";

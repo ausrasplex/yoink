@@ -28,7 +28,6 @@ npx tsc --noEmit       # typecheck (run after every change). On a fresh checkout
 npm run lint           # one known error in stock src/components/ui/carousel.tsx — not ours, ignore
 npx prisma migrate deploy   # apply migrations
 npx prisma generate         # after schema edits (also runs on npm install)
-npm run seed           # optional: create/refresh the server admin from SERVER_ADMIN_EMAIL / SERVER_ADMIN_PASSWORD
 npm run seed:demo      # demo users/items/bids/photos + demo admin admin@example.com — DESTRUCTIVE: replaces items, bids, USERs
 ```
 E2E scripts: `tests/e2e/` (see its README). Run against a throwaway DB only.
@@ -108,6 +107,9 @@ Money is **whole dollars** (Int).
 - **File inputs:** use `FileInput` (`src/components/ui/file-input.tsx`), not a bare `<Input type="file">` (the browser's own
   control doesn't line up). It wraps a real file input, so forms submit it normally and e2e `setInputFiles('#id')` still works.
 - **Date/time inputs:** `DateTimeField` (themed calendar + time popover; submits ISO/UTC in a hidden field).
+- **Docker image** is slim: Next standalone output + static + public + migrations + a standalone Prisma CLI
+  (`/opt/prisma-cli`, pinned to package-lock) that runs `migrate deploy` on start. No seed, no full node_modules. Anything
+  that must run at container start has to work with only those. CI builds linux/amd64 only.
 - **Background job:** `src/instrumentation.ts` runs the daily digest check (`src/lib/digest.ts`) every 5 min; it's idempotent.
 - **Section cards:** use `SectionCard` (`src/components/section-card.tsx`). A section's main form button goes right of the heading
   on desktop and at the end of the form below `lg`: the form component renders the card itself and puts
@@ -132,7 +134,7 @@ Money is **whole dollars** (Int).
 
 ## Environment
 See `.env.example`. Key ones: `DATABASE_URL`, `APP_URL` (what QR codes and email links point at), `APP_SECRET`,
-`COOKIE_SECURE`, `UPLOAD_DIR`, optional `SERVER_ADMIN_EMAIL`/`SERVER_ADMIN_PASSWORD`/`SERVER_ADMIN_NAME`, optional `ACCESS_CODE` (code required to self-register).
+`COOKIE_SECURE`, `UPLOAD_DIR`, optional `ACCESS_CODE` (code required to self-register).
 
 ## Status
 Done: server admin role (setup, branding, SMTP, admin invites), bidding, QR codes (sheet, per-item card with PNG/SVG download, logo + colour), roles, user settings (password, devices),

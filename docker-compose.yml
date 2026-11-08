@@ -29,10 +29,6 @@ services:
       COOKIE_SECURE: ${COOKIE_SECURE:-false}
       APP_SECRET: ${APP_SECRET:?set APP_SECRET (16+ random characters)}
       ACCESS_CODE: ${ACCESS_CODE:-}
-      # Optional: create the server admin on start. Leave unset to create it at /setup on first visit.
-      SERVER_ADMIN_EMAIL: ${SERVER_ADMIN_EMAIL:-}
-      SERVER_ADMIN_PASSWORD: ${SERVER_ADMIN_PASSWORD:-}
-      SERVER_ADMIN_NAME: ${SERVER_ADMIN_NAME:-Server admin}
     volumes:
       - uploads:/data/uploads
 

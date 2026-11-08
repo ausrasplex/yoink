@@ -1,5 +1,5 @@
 // Server admin: separate from admins, only server settings + managing admins.
-// Needs SA_EMAIL / SA_PASSWORD for the server admin (the SERVER_ADMIN_* values you seeded, or what you entered at /setup).
+// Needs SA_EMAIL / SA_PASSWORD for the server admin (what you entered at /setup).
 import { chromium } from "playwright";
 const B = process.env.BASE_URL ?? "http://localhost:3000";
 const SA_EMAIL = process.env.SA_EMAIL, SA_PASSWORD = process.env.SA_PASSWORD;

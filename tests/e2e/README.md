@@ -13,7 +13,7 @@ npx playwright install chromium
 
 ```bash
 npx prisma migrate deploy
-npm run seed        # server admin from SERVER_ADMIN_EMAIL / SERVER_ADMIN_PASSWORD (or create it at /setup first)
+# open the app once and create the server admin at /setup (06 needs its email/password as SA_EMAIL / SA_PASSWORD)
 npm run seed:demo   # demo users/items/bids; alyssa@example.com / demo-password-1; admin admin@example.com / change-me-please
 npm run build && npm start      # or npm run dev
 ```

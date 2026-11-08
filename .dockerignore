@@ -4,7 +4,8 @@ node_modules
 .github
 data
 .env*
-tests/e2e/node_modules
-tests/e2e/shots
+tests
 unraid
 assets
+*.md
+docker-compose.yml

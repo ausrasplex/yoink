@@ -10,10 +10,9 @@ Full walkthrough (external Postgres, phone testing, troubleshooting): **[LOCAL_S
 cp .env.example .env          # edit DATABASE_URL, APP_SECRET etc.
 npm install
 npx prisma migrate deploy
-npm run seed                  # optional: creates the server admin from SERVER_ADMIN_EMAIL / SERVER_ADMIN_PASSWORD
 npm run dev
 ```
-Without the `SERVER_ADMIN_*` variables, the first visit opens **/setup**, which creates the server admin (always the first account).
+The first visit opens **/setup**, which creates the server admin (always the first account); after that the app works as usual.
 
 ## Run with Docker
 ```bash
@@ -29,8 +28,7 @@ The template is `unraid/yoink.xml` (icon: `unraid/icon.png`). It installs only t
 4. In Unraid: **Docker → Add Container**, paste the raw template URL into *Template* (or copy the XML to
    `/boot/config/plugins/dockerMan/templates-user/my-yoink.xml`), then fill in **Database URL**, **Public web address**
    and **Secret key** (`openssl rand -base64 32`). Set **Secure cookies** to `true` behind an HTTPS reverse proxy.
-5. Start it and open the WebUI: migrations run automatically on every start, and the first visit creates the server admin
-   (unless you filled in the optional Server admin settings).
+5. Start it and open the WebUI: migrations run automatically on every start, and the first page creates the server admin.
 
 Uploads live in the **App data** path (`/data`); back it up along with the database.
 

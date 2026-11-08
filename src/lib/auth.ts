@@ -66,7 +66,11 @@ const serverAdminMayOpen = (path: string) => SERVER_ADMIN_PATHS.some((p) => path
 /** Redirects to /login (remembering where the user was headed, e.g. a scanned lot) if not signed in. */
 export async function requireUser(next = "/") {
   const user = await getUser();
-  if (!user) redirect(`/login?next=${encodeURIComponent(next)}`);
+  if (!user) {
+    // A brand-new install has no accounts yet: the first thing anyone sees is "Create the server admin".
+    if (!(await hasServerAdmin())) redirect("/setup");
+    redirect(`/login?next=${encodeURIComponent(next)}`);
+  }
   // Temporary passwords (admin-created / reset accounts) must be replaced before anything else.
   if (user.mustChangePassword && next !== "/account/password") redirect("/account/password");
   // The server admin keeps the app running; it doesn't browse, bid or manage auction content.
@@ -95,7 +99,7 @@ export async function requireManager() {
   return user;
 }
 
-/** False until /setup (or `npm run seed`) creates the server admin, which is always the first account. */
+/** False until /setup creates the server admin, which is always the first account. */
 export const hasServerAdmin = cache(async () => (await db.user.count({ where: { role: "SERVER_ADMIN" } })) > 0);
 
 /** Admins manage users; the server admin manages admins. Nobody manages the server admin from these pages. */

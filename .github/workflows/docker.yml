@@ -30,13 +30,12 @@ jobs:
       - run: npm run typecheck
       - run: npm run test:unit
 
+  # Runs alongside "check" (not after it), so a push takes as long as the slower of the two.
   image:
-    needs: check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - uses: docker/setup-qemu-action@v3
       - uses: docker/setup-buildx-action@v3
 
       - name: Log in to GHCR
@@ -62,7 +61,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64 # AMD/Intel only (Unraid). Building ARM here meant slow CPU emulation.
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
