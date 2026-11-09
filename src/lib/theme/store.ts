@@ -7,7 +7,7 @@ import { sanitizeSvg, SvgError } from "@/lib/svg";
 import { COPY_KEYS, DEFAULT_COPY, type CopyTable } from "@/lib/theme/copy";
 import {
   ASSET_NAME, describeIssue, FONT_ASSET, IMAGE_ASSET, inWindow, THEME_ID, themeSchema, windowSpan, copyTable,
-  type Effect, type ThemeFile,
+  type Celebration, type Effect, type ThemeFile,
 } from "@/lib/theme/schema";
 
 /**
@@ -28,7 +28,7 @@ export type ThemeEntry =
 
 const DEFAULT_ENTRY: ThemeEntry = {
   id: DEFAULT_THEME_ID, source: "default", ok: true, dir: null, version: "0", replacesBuiltIn: false,
-  theme: { name: "Yoink", description: "The original look and wording.", effect: "none" },
+  theme: { name: "Yoink", description: "The original look and wording.", effect: "none", celebration: "confetti" },
 };
 
 const MAX_JSON = 256 * 1024;
@@ -106,7 +106,7 @@ export function pickTheme(mode: string, previewId: string | null, now = new Date
 }
 
 export type ActiveTheme = {
-  id: string; name: string; effect: Effect; copy: CopyTable;
+  id: string; name: string; effect: Effect; celebration: Celebration; copy: CopyTable;
   colours: ThemeFile["colours"];
   images: { icon?: string; iconDark?: string; logo?: string; logoDark?: string; background?: string }; // URLs
   font?: { url: string; use: "headings" | "all" };
@@ -119,7 +119,7 @@ export function activeTheme(mode: string, previewId: string | null): ActiveTheme
   const t = pickTheme(mode, previewId);
   const img = t.theme.images ?? {};
   return {
-    id: t.id, name: t.theme.name, effect: t.theme.effect, copy: copyTable(t.theme.copy), colours: t.theme.colours,
+    id: t.id, name: t.theme.name, effect: t.theme.effect, celebration: t.theme.celebration ?? "confetti", copy: copyTable(t.theme.copy), colours: t.theme.colours,
     images: {
       icon: img.icon && assetUrl(t, img.icon), iconDark: img.iconDark && assetUrl(t, img.iconDark),
       logo: img.logo && assetUrl(t, img.logo), logoDark: img.logoDark && assetUrl(t, img.logoDark),
@@ -289,6 +289,7 @@ export function templateZip(docs: Record<string, string>): Uint8Array {
     active: { from: "12-01", to: "12-26" },
     colours: { ink: "#2a2742", lilac: "#b9a4fa", peach: "#fddfba", lime: "#e9f94c", canvas: "#f1f1f3" },
     effect: "none",
+    celebration: "confetti",
     copy,
   };
   return zipSync({

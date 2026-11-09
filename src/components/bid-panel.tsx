@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { placeBidAction } from "@/app/lot/[lot]/actions";
 import { BidCelebration, type Celebration } from "@/components/bid-celebration";
+import { WinCelebration } from "@/components/theme/win-celebration";
 import { Countdown, useNow } from "@/components/countdown";
 import { useCopy } from "@/components/theme/theme-provider";
 import { money } from "@/lib/format";
@@ -96,6 +97,7 @@ export function BidPanel({ lot, title, first, initial, startingBid, increment }:
         </div>
       ) : phase === "ended" ? (
         <div className="mt-5 rounded-2xl bg-white/10 p-4">
+          {status.youLead && <WinCelebration lots={[lot]} />}
           <p className="font-bold">{t("endedTitle")}</p>
           <p className="mt-1 text-sm text-white/70">
             {status.youLead ? t("wonBody", { lot }) : status.youBid ? t("lostBody", { lot }) : `Ended ${listingTime(status.endsAt)}.`}

@@ -103,7 +103,8 @@ Money is **whole dollars** (Int).
 - **Dropdowns:** use the themed `Select` (`src/components/ui/select.tsx`; `variant="soft"` for toolbars), never a native `<select>`.
   Radix items can't have an empty value — use a sentinel like `"__all"`.
 - **Icons:** the source artwork is `assets/yoink-icon.png`; `node assets/make-icons.mjs` regenerates `unraid/icon.png`,
-  `public/brand-default.png` (default in-app logo), `public/favicon.ico`, `icon-512.png` and `apple-touch-icon.png`.
+  `public/brand-default.png` (default in-app logo), `public/favicon.ico`, `icon-192/512.png`, full-bleed `icon-maskable-192/512.png`
+  and `apple-touch-icon.png`. `src/app/manifest.ts` (Install app: standalone, Branding name/icon, theme colours) lists them.
   The Branding logo replaces them in-app and in the tab via `BrandMark` and `generateMetadata` in `src/app/layout.tsx`.
   Don't add `src/app/favicon.ico` back (Next would always link it and browsers prefer it).
 - **File inputs:** use `FileInput` (`src/components/ui/file-input.tsx`), not a bare `<Input type="file">` (the browser's own
@@ -115,7 +116,9 @@ Money is **whole dollars** (Int).
 - **Themes / wording:** user-facing text that a theme might change goes through a key in `src/lib/theme/copy.ts`
   (server: `pageCopy()` / `themeCopy()` for emails; client: `useCopy()`). Add the key to themes/THEMES.md too. Themes are
   data only (no scripts/CSS); colours override `--ink`/`--lime`/… at :root, so use those tokens, not hard-coded colours.
-  Brand images go through `brandImages()` (theme → Branding upload → default).
+  Brand images go through `brandImages()` (theme → Branding upload → default). Effect/celebration names live in
+  `src/lib/theme/effects.ts`; canvas code in `src/components/theme/` (theme-effect.tsx background, celebrate.ts bursts on
+  bid / first sight of a win, particles.ts shapes).
 - **Background job:** `src/instrumentation.ts` runs every 5 min: notifications (Won / Didn't win, ending within the hour,
   new items — each listing claimed once via endNotifiedAt / endingSoonNotifiedAt / announcedAt) and the
   daily digest (both idempotent, claim-then-act), plus hourly notification pruning.

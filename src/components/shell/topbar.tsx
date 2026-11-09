@@ -27,7 +27,9 @@ export function TopBar(p: {
 }) {
   const bidder = p.role !== "SERVER_ADMIN"; // the server admin has no items to search or bids to watch
   return (
-    <header className="flex items-center gap-3 px-4 py-4 lg:px-10 lg:py-6">
+    // Sticky: stays at the top while the page scrolls under it (the shell's overflow-x-clip doesn't break sticky,
+    // unlike overflow-hidden). Translucent page colour + blur so content fades out beneath it.
+    <header className="sticky top-0 z-30 flex items-center gap-3 bg-canvas/85 px-4 py-3 backdrop-blur-md supports-[backdrop-filter]:bg-canvas/70 lg:px-10 lg:py-4">
       <div className="min-w-0 lg:hidden"><Brand name={p.brand} logo={p.logo} logoWide={p.logoWide} /></div>
       {bidder && <form action="/items" method="get" role="search" className="relative ml-auto hidden max-w-sm flex-1 sm:block lg:ml-0">
         <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -50,7 +52,8 @@ export function TopBar(p: {
           <DropdownMenuTrigger className="rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50" aria-label="Account menu">
             <UserAvatar name={p.name} avatar={p.avatar} className="size-10" textClassName="text-sm" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-60">
+          {/* Phones: same size as the notifications panel (1.5rem in from each edge); from sm up, a 15rem menu. */}
+          <DropdownMenuContent align="end" collisionPadding={24} className="w-[calc(100vw-3rem)] sm:w-60">
             <DropdownMenuLabel className="font-normal">
               <p className="truncate text-sm font-bold">{p.name}</p>
               <p className="truncate text-xs text-muted-foreground">{p.email}</p>
@@ -62,16 +65,16 @@ export function TopBar(p: {
                 <DropdownMenuSeparator />
                 <DropdownMenuLabel className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Admin</DropdownMenuLabel>
                 {adminItems.map((item) => (
-                  <DropdownMenuItem key={item.href} asChild>
+                  <DropdownMenuItem key={item.href} asChild className="gap-3 py-2.5">
                     <Link href={item.href}><item.icon className="size-4" /> {item.label}</Link>
                   </DropdownMenuItem>
                 ))}
               </div>
             )}
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem asChild className="py-2.5">
               <form action={logoutAction}>
-                <button type="submit" className="flex w-full items-center gap-2"><LogOut className="size-4" /> Log out</button>
+                <button type="submit" className="flex w-full items-center gap-3"><LogOut className="size-4" /> Log out</button>
               </form>
             </DropdownMenuItem>
           </DropdownMenuContent>

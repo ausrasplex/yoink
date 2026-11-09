@@ -32,7 +32,11 @@ test("theme.json validation", () => {
   assert.ok(themeSchema.safeParse({ name: "Minimal" }).success);
   assert.ok(!themeSchema.safeParse({ name: "X", colours: { ink: "red" } }).success);
   assert.ok(!themeSchema.safeParse({ name: "X", active: { from: "13-01", to: "12-01" } }).success);
-  assert.ok(!themeSchema.safeParse({ name: "X", effect: "fireworks" }).success);
+  assert.ok(!themeSchema.safeParse({ name: "X", effect: "lasers" }).success);
+  for (const effect of ["hearts", "bubbles", "stars", "fireworks"]) assert.ok(themeSchema.safeParse({ name: "X", effect }).success, effect);
+  assert.equal(themeSchema.parse({ name: "X" }).celebration, "confetti"); // default burst
+  assert.ok(themeSchema.safeParse({ name: "X", celebration: "hearts" }).success);
+  assert.ok(!themeSchema.safeParse({ name: "X", celebration: "bats" }).success);
   assert.ok(!themeSchema.safeParse({ name: "X", copy: { notAKey: "hi" } }).success, "unknown wording keys are rejected");
   assert.ok(!themeSchema.safeParse({ name: "X", images: { icon: "../../etc/passwd.png" } }).success, "no paths in file names");
 });

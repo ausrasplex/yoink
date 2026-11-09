@@ -6,6 +6,7 @@ import { AppShell, PageTitle } from "@/components/shell/app-shell";
 import { FilterChips } from "@/components/filter-chips";
 import { bidStatus, ItemThumb, StatusBadge } from "@/components/item-card";
 import { ListingClock } from "@/components/countdown";
+import { WinCelebration } from "@/components/theme/win-celebration";
 import { Button } from "@/components/ui/button";
 import { requireUser } from "@/lib/auth";
 import { money } from "@/lib/format";
@@ -78,6 +79,7 @@ export default async function BidsPage({ searchParams }: { searchParams: Promise
           ))}
         </ul>
       )}
+      <WinCelebration lots={everything.filter(won).map((b) => b.lot)} />
     </AppShell>
   );
 }

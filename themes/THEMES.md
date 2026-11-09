@@ -1,6 +1,6 @@
 # Yoink themes
 
-A theme changes how Yoink looks and talks for everyone: colours, images, a font, a falling effect and the wording of
+A theme changes how Yoink looks and talks for everyone: colours, images, a font, a background effect, a celebration burst and the wording of
 bids, alerts and emails. Make one for Christmas, Halloween, your club's anniversary…
 
 Themes are managed by the **Server Admin** on the **Server** page → **Themes**:
@@ -46,6 +46,7 @@ like logo uploads. Themes can't contain scripts or CSS.
   "images": { "icon": "icon.png", "logo": "logo.svg", "background": "background.webp" },
   "font": { "file": "heading.woff2", "use": "headings" },
   "effect": "snow",
+  "celebration": "stars",
   "copy": {
     "placeBid": "Bid for it 🎁",
     "outbidTitle": ["Someone snuck down the chimney!", "A rival elf just outbid you!"],
@@ -64,7 +65,8 @@ Only `name` is required. Everything else is optional — leave something out and
 | `colours` | Any of `ink` (text and dark surfaces), `lilac`, `peach`, `lime` (accents and main buttons) and `canvas` (page background), as `#rrggbb`. Keep `ink` dark: it's the text colour. |
 | `images` | `icon` (square: browser tab and next to the name), `logo` (landscape, replaces icon + name), `iconDark` / `logoDark` (versions for dark backgrounds such as the desktop sign-in panel; fall back to `icon` / `logo`), `background` (behind the whole app). Theme images win over the Branding uploads while the theme is on. |
 | `font` | `file` in the folder, and `use`: `"headings"` (titles only — good for decorative fonts) or `"all"`. Check the font's licence allows it (Google Fonts' are fine). |
-| `effect` | `none`, `snow`, `leaves`, `bats` or `confetti`. Off automatically for people whose device asks for reduced motion. |
+| `effect` | Background animation: `none`, `snow`, `leaves`, `bats`, `confetti`, `hearts`, `bubbles`, `stars` or `fireworks`. Off automatically for people whose device asks for reduced motion. |
+| `celebration` | Burst when a bid makes someone the highest bidder (small) and the first time they see an item they won (big): `confetti` (default), `hearts`, `stars`, `snow`, `leaves`, `fireworks` or `none`. Also off for reduced motion. |
 | `copy` | Wording. Each key is a piece of text, or a list of options — one is picked per day, so it varies without changing mid-visit. |
 
 ## Wording keys
@@ -104,5 +106,5 @@ Only `name` is required. Everything else is optional — leave something out and
 
 ## Built-in themes
 
-Christmas (1–26 Dec, snow), Halloween (20 Oct – 1 Nov, bats), Autumn (Mar–May, leaves) and Britney (no dates,
-confetti). Download one from the Server page to use as a starting point.
+Christmas (1–26 Dec, snow, star bursts), New Year (27 Dec – 2 Jan, fireworks, star bursts), Halloween (20 Oct – 1 Nov,
+bats, firework bursts), Autumn (Mar–May, leaves) and Britney (no dates, hearts, confetti bursts). Download one from the Server page to use as a starting point.

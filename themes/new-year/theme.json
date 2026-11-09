@@ -1,0 +1,36 @@
+{
+  "name": "New Year",
+  "description": "Fireworks, midnight blue and gold to see the year out.",
+  "active": {
+    "from": "12-27",
+    "to": "01-02"
+  },
+  "colours": {
+    "ink": "#1b2240",
+    "lilac": "#a9b8f5",
+    "peach": "#f6e3b4",
+    "lime": "#f2c94c",
+    "canvas": "#f2f1f6"
+  },
+  "effect": "fireworks",
+  "celebration": "stars",
+  "copy": {
+    "welcomeBack": [
+      "Happy New Year, {first}! 🎆",
+      "New year, new bids, {first}!",
+      "Cheers, {first}! 🥂"
+    ],
+    "signInHeadline": "Start the year with a win.",
+    "placeBid": "Bid for it 🥂",
+    "bidPlaced": [
+      "Pop the bubbly: your {amount} bid is in!",
+      "{amount} bid placed. Cheers!"
+    ],
+    "bidDialogTitle": [
+      "You're leading the countdown! 🎆",
+      "Cheers, {first}!"
+    ],
+    "bidDialogButton": "Cheers!",
+    "leadingTitle": "You're leading the countdown!"
+  }
+}

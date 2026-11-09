@@ -17,6 +17,7 @@
     "use": "headings"
   },
   "effect": "bats",
+  "celebration": "fireworks",
   "copy": {
     "welcomeBack": [
       "Boo, {first}! Welcome back. 🦇",

@@ -12,7 +12,7 @@
 
 Yoink is a self-hosted silent-auction web app. Guests scan an item's QR code, sign in and bid from their phone. Each
 item ("lot") has its own bidding window. Bidders get alerts when they're outbid, win or lose, and emails. A **theme**
-changes the app's colours, images, font, a decorative falling effect, and the wording of those messages, for everyone,
+changes the app's colours, images, font, a decorative background effect, a celebration burst, and the wording of those messages, for everyone,
 for an occasion (Christmas, Halloween, a club anniversary…).
 
 Themes are **data only**: a `theme.json` file plus optional image and font files. No code, no CSS.
@@ -42,6 +42,7 @@ Only `name` is required. Leave out anything you don't need; the app's defaults f
   "images": { "icon": "icon.svg", "logo": "logo.svg", "background": "background.svg" },
   "font": { "file": "heading.woff2", "use": "headings" },
   "effect": "leaves",
+  "celebration": "confetti",
   "copy": {
     "welcomeBack": ["Happy spring, {first}!", "Welcome back, {first} 🌷"],
     "placeBid": "Bid & bloom"
@@ -57,7 +58,8 @@ Only `name` is required. Leave out anything you don't need; the app's defaults f
 | `colours` | Object with any of `ink`, `lilac`, `peach`, `lime`, `canvas`. Each exactly `#rrggbb` (six hex digits, no shorthand, no names, no alpha). See "Colours". |
 | `images` | Object with any of `icon`, `iconDark`, `logo`, `logoDark`, `background`. Each is a **file name** in the same folder (no paths), matching `^[A-Za-z0-9][A-Za-z0-9._-]{0,63}\.(png|jpg|jpeg|webp|svg)$`. Every file named here must be in the folder. |
 | `font` | Object `{ "file": "…", "use": "headings" | "all" }`. `file` matches the same file-name rule but must end in `.woff2`, `.woff`, `.ttf` or `.otf`, and must be in the folder. `use` defaults to `"headings"`. |
-| `effect` | One of `"none"` (default), `"snow"`, `"leaves"`, `"bats"`, `"confetti"`. Nothing else. |
+| `effect` | One of `"none"` (default), `"snow"`, `"leaves"`, `"bats"`, `"confetti"`, `"hearts"`, `"bubbles"`, `"stars"`, `"fireworks"`. Nothing else. |
+| `celebration` | One of `"confetti"` (default), `"hearts"`, `"stars"`, `"snow"`, `"leaves"`, `"fireworks"`, `"none"`. Nothing else. See "Celebration". |
 | `copy` | Object of wording keys (below). Each value is a string (1–500 characters) or an array of 1–20 such strings. **Only the keys listed below are allowed**; any other key makes the whole theme invalid. |
 
 No other top-level fields are allowed in spirit; unknown ones are ignored, so don't invent any.
@@ -114,14 +116,25 @@ Allowed font files: `.woff2` (best), `.woff`, `.ttf`, `.otf`.
 
 ## Effect
 
-One decorative animation drawn over the page (it never blocks clicks, and it's switched off for people who've asked
+One decorative background animation drawn over the page (it never blocks clicks, and it's switched off for people who've asked
 their device for reduced motion):
 
 - `snow`: soft white flakes. Winter, Christmas.
 - `leaves`: autumn-coloured leaves drifting and spinning. Autumn, harvest, nature.
 - `bats`: dark bat silhouettes flapping across. Halloween, spooky.
 - `confetti`: tumbling pieces in the theme's `lime`, `lilac` and `peach` plus pink and blue. Celebrations, parties, anniversaries.
+- `hearts`: pink hearts floating gently upwards. Valentine's, weddings, "love" fundraisers.
+- `bubbles`: see-through bubbles (in the theme's `lilac`) rising and popping. Kids' events, pool or beach parties.
+- `stars`: gold and `lime` stars twinkling in place, nothing falling. Gala nights, New Year's Eve, anything glam.
+- `fireworks`: every few seconds a burst of sparks in the theme's colours. New Year, Australia Day, big launches.
 - `none`: no animation.
+
+## Celebration
+
+A one-off burst, separate from the background effect: a small one out of the "you're the highest bidder" dialog when a
+bid goes through, and a big one (from both bottom corners, or several fireworks) the first time someone sees an item
+they've won. Also off for reduced motion. Pick one that suits the theme: `confetti` (default; the theme's colours),
+`hearts`, `stars` (gold), `snow`, `leaves`, `fireworks`, or `none` for no burst.
 
 ## Wording (`copy`)
 
@@ -227,7 +240,8 @@ Use **Preview** to check it before switching it on.
 - [ ] Only the listed placeholders are used for each key.
 - [ ] Colours are `#rrggbb`. `ink` is dark, `canvas` is light, accents are readable with `ink` text.
 - [ ] `active` dates (if any) are `MM-DD` and suit the occasion and hemisphere.
-- [ ] `effect` is one of `none`, `snow`, `leaves`, `bats`, `confetti`.
+- [ ] `effect` is one of `none`, `snow`, `leaves`, `bats`, `confetti`, `hearts`, `bubbles`, `stars`, `fireworks`.
+- [ ] `celebration`, if present, is one of `confetti`, `hearts`, `stars`, `snow`, `leaves`, `fireworks`, `none`.
 - [ ] Every file named in `images` / `font` is provided (by you as SVG, or listed for the user to add). Otherwise
       remove that entry.
 - [ ] SVGs have a `viewBox`, no scripts, links, animation or external references.

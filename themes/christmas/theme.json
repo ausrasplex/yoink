@@ -17,6 +17,7 @@
     "use": "headings"
   },
   "effect": "snow",
+  "celebration": "stars",
   "copy": {
     "welcomeBack": [
       "Merry bidding, {first}! 🎄",

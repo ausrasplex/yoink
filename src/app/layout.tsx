@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { connection } from "next/server";
@@ -42,7 +42,16 @@ export async function generateMetadata(): Promise<Metadata> {
     title: brandName(a),
     description: a.appSlogan || "Scan, view and bid.",
     icons: favicon((await brandImages(a)).logo), // theme icon → Branding icon (if its file is here) → default
+    // iPhone "Add to Home Screen": open full screen like an app (Android uses app/manifest.ts).
+    appleWebApp: { capable: true, title: brandName(a), statusBarStyle: "default" },
   };
+}
+
+/** Browser and installed-app bar colour: the page background, so the status bar blends in. */
+export async function generateViewport(): Promise<Viewport> {
+  await connection();
+  const theme = await getActiveTheme();
+  return { themeColor: theme.colours?.canvas ?? "#f1f1f3" };
 }
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
@@ -53,7 +62,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   // the head and keeps there. (An explicit <head> with conditional content mismatched on hydration and React's recovery
   // render wiped Next's stylesheets from the head.) The href changes with the CSS, so a theme switch swaps it.
   return (
-    <html lang="en" data-theme={theme.id} className={`${jakarta.variable} h-full antialiased`}>
+    <html lang="en" data-theme={theme.id} data-celebration={theme.celebration} className={`${jakarta.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         {css ? <style href={`yoink-theme-${theme.id}-${cssHash(css)}`} precedence="high">{css}</style> : null}
         <ThemeProvider copy={theme.copy}>{children}</ThemeProvider>

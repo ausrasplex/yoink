@@ -12,7 +12,8 @@
     "file": "heading.woff2",
     "use": "headings"
   },
-  "effect": "confetti",
+  "effect": "hearts",
+  "celebration": "confetti",
   "copy": {
     "welcomeBack": [
       "Oops!… {first} did it again: welcome back! 💖",

@@ -108,7 +108,24 @@
         "snow",
         "leaves",
         "bats",
-        "confetti"
+        "confetti",
+        "hearts",
+        "bubbles",
+        "stars",
+        "fireworks"
+      ]
+    },
+    "celebration": {
+      "default": "confetti",
+      "type": "string",
+      "enum": [
+        "none",
+        "confetti",
+        "hearts",
+        "stars",
+        "snow",
+        "leaves",
+        "fireworks"
       ]
     },
     "copy": {

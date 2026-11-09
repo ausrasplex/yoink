@@ -11,6 +11,7 @@ import { db } from "@/lib/db";
 import { money } from "@/lib/format";
 import { listingTime, openNow } from "@/lib/listing";
 import { getBidActivity, getMyBids } from "@/lib/user-data";
+import { WinCelebration } from "@/components/theme/win-celebration";
 
 export const dynamic = "force-dynamic";
 
@@ -203,6 +204,7 @@ export default async function Dashboard() {
           </section>
         </div>
       </div>
+      <WinCelebration lots={won.map((b) => b.lot)} />
     </AppShell>
   );
 }

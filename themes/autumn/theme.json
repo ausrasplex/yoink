@@ -17,6 +17,7 @@
     "use": "headings"
   },
   "effect": "leaves",
+  "celebration": "leaves",
   "copy": {
     "welcomeBack": [
       "Welcome back, {first} 🍂",

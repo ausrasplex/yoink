@@ -1,13 +1,14 @@
 import { z } from "zod";
 import { COPY_KEYS, type CopyKey, type CopyTable } from "@/lib/theme/copy";
+import { CELEBRATIONS, EFFECTS, type Celebration, type Effect } from "@/lib/theme/effects";
+
+export { CELEBRATIONS, EFFECTS, type Celebration, type Effect };
 
 /**
  * theme.json — the one file every theme folder needs. Documented for theme authors in THEMES.md.
- * Themes are data only: no scripts, no CSS. Colours, images, a font, one built-in effect and wording.
+ * Themes are data only: no scripts, no CSS. Colours, images, a font, one built-in effect, a celebration style and wording.
  */
 
-export const EFFECTS = ["none", "snow", "leaves", "bats", "confetti"] as const;
-export type Effect = (typeof EFFECTS)[number];
 
 export const THEME_ID = /^[a-z0-9][a-z0-9-]{0,39}$/; // folder name
 export const ASSET_NAME = /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}\.(png|jpe?g|webp|svg|woff2?|ttf|otf)$/;
@@ -31,6 +32,8 @@ export const themeSchema = z.object({
     use: z.enum(["headings", "all"]).default("headings"),
   }).optional(),
   effect: z.enum(EFFECTS).default("none"),
+  /** Burst when a bid makes you the highest bidder / when you win. Left out: the default confetti. */
+  celebration: z.enum(CELEBRATIONS).default("confetti"),
   copy: z.record(z.string(), z.union([text, z.array(text).min(1).max(20)])).optional()
     .superRefine((c, ctx) => {
       for (const k of Object.keys(c ?? {})) {
