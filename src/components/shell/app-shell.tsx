@@ -21,10 +21,17 @@ export async function AppShell({ user, children }: { user: ShellUser; children: 
       </aside>
       {/* overflow-x-clip: if anything is ever too wide, clip it here instead of widening the whole page on phones
           (a wider page also drags the fixed bottom nav off-screen) */}
-      <div className="min-w-0 flex-1 overflow-x-clip">
-        <div className="mx-auto flex min-h-dvh w-full max-w-7xl flex-col">
-          <TopBar brand={info.name} logo={info.logo} logoWide={info.logoWide} name={user.name} email={user.email} avatar={user.avatar ?? null} role={user.role} notifications={notifications} />
-          <main className="flex-1 px-4 pt-2 lg:px-10">{children}</main>
+      <div className="flex min-h-dvh min-w-0 flex-1 flex-col overflow-x-clip">
+        {/* Top bar: stays put while the page scrolls under it (overflow-x-clip doesn't break sticky, unlike hidden).
+            Always the same look, scrolled or not: semi-opaque page colour, backdrop blur and a thin line underneath.
+            The strip spans the whole area right of the sidebar; its contents line up with the page's centred column. */}
+        <div className="sticky top-0 z-30 border-b border-border bg-canvas/75 backdrop-blur-md">
+          <div className="mx-auto w-full max-w-7xl">
+            <TopBar brand={info.name} logo={info.logo} logoWide={info.logoWide} name={user.name} email={user.email} avatar={user.avatar ?? null} role={user.role} notifications={notifications} />
+          </div>
+        </div>
+        <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col">
+          <main className="flex-1 px-4 pt-4 lg:px-10 lg:pt-6">{children}</main>
           {/* below lg the fixed bottom nav covers the last ~6rem, so the footer sits above that gap */}
           <AppFooter name={info.name} className="px-4 pb-28 pt-10 lg:px-10 lg:pb-8" />
         </div>

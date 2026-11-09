@@ -27,9 +27,8 @@ export function TopBar(p: {
 }) {
   const bidder = p.role !== "SERVER_ADMIN"; // the server admin has no items to search or bids to watch
   return (
-    // Sticky: stays at the top while the page scrolls under it (the shell's overflow-x-clip doesn't break sticky,
-    // unlike overflow-hidden). Translucent page colour + blur so content fades out beneath it.
-    <header className="sticky top-0 z-30 flex items-center gap-3 bg-canvas/85 px-4 py-3 backdrop-blur-md supports-[backdrop-filter]:bg-canvas/70 lg:px-10 lg:py-4">
+    // AppShell makes this sticky (full-width strip: semi-opaque, blurred, line underneath).
+    <header className="flex items-center gap-3 px-4 py-3 lg:px-10 lg:py-4">
       <div className="min-w-0 lg:hidden"><Brand name={p.brand} logo={p.logo} logoWide={p.logoWide} /></div>
       {bidder && <form action="/items" method="get" role="search" className="relative ml-auto hidden max-w-sm flex-1 sm:block lg:ml-0">
         <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
