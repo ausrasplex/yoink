@@ -8,10 +8,13 @@ import { Button } from "@/components/ui/button";
 import { requireUser } from "@/lib/auth";
 import { pageCopy } from "@/lib/theme/active";
 import { db } from "@/lib/db";
-import { money } from "@/lib/format";
+import { brandName, money } from "@/lib/format";
 import { listingTime, openNow } from "@/lib/listing";
 import { getBidActivity, getMyBids } from "@/lib/user-data";
 import { WinCelebration } from "@/components/theme/win-celebration";
+import { InstallCard } from "@/components/install/install-ui";
+import { getAuction } from "@/lib/auction";
+import { brandImages } from "@/lib/brand";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +22,8 @@ const heroTints = ["bg-lilac", "bg-peach", "bg-lime"];
 
 export default async function Dashboard() {
   const user = await requireUser("/");
+  const brand = await getAuction();
+  const appIcon = (await brandImages(brand)).logo ?? "/icon-192.png";
   const now = new Date();
   const [mine, activity, hot, openCount, endingNext, startingNext] = await Promise.all([
     getMyBids(user.id),
@@ -62,6 +67,7 @@ export default async function Dashboard() {
   return (
     <AppShell user={user}>
       <PageTitle icon={<LayoutGrid />}>My Progress</PageTitle>
+      <InstallCard name={brandName(brand)} icon={appIcon} />
 
       <section className="relative mb-8 overflow-hidden rounded-3xl bg-ink text-white lg:overflow-visible">
         <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center">

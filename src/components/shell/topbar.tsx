@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { LogOut, Search } from "lucide-react";
+import { Download, LogOut, Search } from "lucide-react";
+import { useInstallMode } from "@/components/install/install-ui";
+import { startInstall } from "@/components/install/install-store";
 import { BrandLockup } from "@/components/brand-mark";
 import { adminItems } from "@/components/shell/nav";
 import { NotificationBell } from "@/components/shell/notification-bell";
@@ -25,6 +27,7 @@ export function TopBar(p: {
   brand: string; logo: string | null; logoWide: string | null; name: string; email: string; avatar: string | null; role: Role;
   notifications: { unread: number; items: NotificationRow[] } | null; // bidders only
 }) {
+  const installMode = useInstallMode();
   const bidder = p.role !== "SERVER_ADMIN"; // the server admin has no items to search or bids to watch
   return (
     // AppShell makes this sticky (full-width strip: semi-opaque, blurred, line underneath).
@@ -71,6 +74,12 @@ export function TopBar(p: {
               </div>
             )}
             <DropdownMenuSeparator />
+            {/* Phones/tablets that can install it and aren't in the installed app already */}
+            {installMode && (
+              <DropdownMenuItem className="gap-3 py-2.5" onSelect={() => { void startInstall(); }}>
+                <Download className="size-4" /> Install app
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem asChild className="py-2.5">
               <form action={logoutAction}>
                 <button type="submit" className="flex w-full items-center gap-3"><LogOut className="size-4" /> Log out</button>

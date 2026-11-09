@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { connection } from "next/server";
+import { InstallDialog } from "@/components/install/install-ui";
 import { PreviewBanner } from "@/components/theme/preview-banner";
 import { ThemeEffect } from "@/components/theme/theme-effect";
 import { ThemeProvider } from "@/components/theme/theme-provider";
@@ -56,7 +57,7 @@ export async function generateViewport(): Promise<Viewport> {
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   await connection();
-  const theme = await getActiveTheme(); // colours, font, background, effect and wording (src/lib/theme)
+  const [theme, a] = await Promise.all([getActiveTheme(), getAuction()]); // theme: colours, font, background, effect and wording (src/lib/theme)
   const css = themeCss(theme);
   // No explicit <head>: the theme's CSS is a React 19 hoistable <style> (href + precedence), which React itself places in
   // the head and keeps there. (An explicit <head> with conditional content mismatched on hydration and React's recovery
@@ -68,6 +69,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <ThemeProvider copy={theme.copy}>{children}</ThemeProvider>
         <ThemeEffect effect={theme.effect} />
         {theme.previewing && <PreviewBanner name={theme.name} />}
+        <InstallDialog name={brandName(a)} />
         <Toaster position="top-center" />
       </body>
     </html>

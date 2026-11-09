@@ -6,10 +6,12 @@ import { SectionCard } from "@/components/section-card";
 import { AppShell, PageTitle } from "@/components/shell/app-shell";
 import { getAuction } from "@/lib/auction";
 import { requireServerAdmin } from "@/lib/auth";
-import { bytes } from "@/lib/format";
+import { brandName, bytes } from "@/lib/format";
 import { listThemes, pickTheme } from "@/lib/theme/store";
 import { appUrlMismatch } from "@/lib/qr";
 import { getUsage } from "@/lib/usage";
+import { InstallCard } from "@/components/install/install-ui";
+import { brandImages } from "@/lib/brand";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +42,7 @@ function EnvRow({ name, ok, value, hint }: { name: string; ok: boolean; value: s
 export default async function ServerSettingsPage() {
   const user = await requireServerAdmin();
   const [a, usage] = await Promise.all([getAuction(), getUsage()]);
+  const appIcon = (await brandImages(a)).logo ?? "/icon-192.png";
   const showing = pickTheme(a.theme, null);
   const md = (v: string) => new Date(2000, Number(v.slice(0, 2)) - 1, Number(v.slice(3))).toLocaleDateString("en-AU", { day: "numeric", month: "short" });
   const themeCards: ThemeCard[] = listThemes().map((t) => t.ok
@@ -56,6 +59,7 @@ export default async function ServerSettingsPage() {
   return (
     <AppShell user={user}>
       <PageTitle icon={<Server />} sub="Settings that keep the app running. Auction content is managed by admins.">Server</PageTitle>
+      <InstallCard name={brandName(a)} icon={appIcon} />
       <div className="grid grid-cols-1 gap-6">
         <SectionCard icon={<ChartColumn className="size-5" />} title="Usage" desc="Totals for this server, including storage on disk.">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
