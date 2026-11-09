@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { ArrowUpRight, ChevronRight, MoreVertical, Trophy, LayoutGrid } from "lucide-react";
+import { ArrowUpRight, MoreVertical, LayoutGrid } from "lucide-react";
 import { AppShell, PageTitle } from "@/components/shell/app-shell";
 import { Countdown } from "@/components/countdown";
-import { bidStatus, ItemThumb, StatusBadge } from "@/components/item-card";
+import { ItemThumb } from "@/components/item-card";
 import { Sparkline } from "@/components/sparkline";
 import { Button } from "@/components/ui/button";
 import { requireUser } from "@/lib/auth";
@@ -17,6 +17,9 @@ import { getAuction } from "@/lib/auction";
 import { brandImages } from "@/lib/brand";
 
 export const dynamic = "force-dynamic";
+
+/** A Statistics card: 72% of the width on phones (so the next one peeks in), a grid cell from sm up. */
+const STAT = "w-[72%] shrink-0 snap-start rounded-3xl bg-white p-5 sm:w-auto";
 
 const heroTints = ["bg-lilac", "bg-peach", "bg-lime"];
 
@@ -106,17 +109,19 @@ export default async function Dashboard() {
         <div className="space-y-8">
           <section>
             <h2 className="mb-4 text-lg font-extrabold text-ink">Statistics</h2>
-            <div className="grid gap-4 sm:grid-cols-3">
-              <div className="rounded-3xl bg-white p-5">
+            {/* Phones: a row that scrolls sideways (snapping card by card, running to the screen edges, with the next card
+                peeking in); sm and up: three columns. */}
+            <div className="-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden">
+              <div className={STAT}>
                 <p className="text-4xl font-extrabold tabular-nums text-ink">{leading.length}</p>
                 <p className="mt-2 text-xs text-muted-foreground">Items winning</p>
               </div>
-              <div className="rounded-3xl bg-white p-5">
+              <div className={STAT}>
                 <p className="text-4xl font-extrabold tabular-nums text-ink">{mine.length}</p>
                 <p className="mt-2 text-xs text-muted-foreground">Items bid on</p>
                 {outbid > 0 && <p className="mt-1 text-xs font-semibold text-destructive">{outbid} outbid</p>}
               </div>
-              <div className="rounded-3xl bg-white p-5">
+              <div className={STAT}>
                 <div className="flex items-end justify-between gap-2">
                   <p className="text-4xl font-extrabold tabular-nums text-ink">{activity.reduce((a, b) => a + b, 0)}</p>
                   <Sparkline values={activity} className="h-12 w-24" />
@@ -126,40 +131,6 @@ export default async function Dashboard() {
             </div>
             {winningTotal > 0 && (
               <p className="mt-3 text-sm text-muted-foreground">Your winning bids total <strong className="text-ink">{money(winningTotal)}</strong>.</p>
-            )}
-          </section>
-
-          <section>
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-extrabold text-ink">My bids</h2>
-              <Link href="/bids" className="text-xs font-semibold text-muted-foreground hover:text-ink">View all</Link>
-            </div>
-            {mine.length === 0 ? (
-              <div className="rounded-3xl bg-white p-8 text-center">
-                <Trophy className="mx-auto size-8 text-muted-foreground" />
-                <p className="mt-3 font-bold text-ink">No bids yet</p>
-                <p className="mt-1 text-sm text-muted-foreground">Scan an item&apos;s QR code or browse the list to place your first bid.</p>
-                <Button asChild className="mt-4"><Link href="/items">Browse items</Link></Button>
-              </div>
-            ) : (
-              <ul className="space-y-3">
-                {mine.slice(0, 4).map((b) => (
-                  <li key={b.lot}>
-                    <Link href={`/lot/${b.lot}`} className="flex items-center gap-4 rounded-3xl bg-white p-3 pr-5 transition-shadow hover:shadow-lg hover:shadow-ink/10">
-                      <ItemThumb lot={b.lot} image={b.image} className="size-14 shrink-0 rounded-2xl" />
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate font-bold text-ink">{b.title}</p>
-                        <p className="text-xs text-muted-foreground">Lot {b.lot} · top bid {money(b.current)}</p>
-                      </div>
-                      <div className="hidden text-right text-sm sm:block">
-                        <p className="font-bold tabular-nums text-ink">{money(b.myBid)}</p><p className="text-xs text-muted-foreground">your bid</p>
-                      </div>
-                      <StatusBadge status={bidStatus(b.leading, b.phase)} />
-                      <ChevronRight className="size-4 text-muted-foreground" />
-                    </Link>
-                  </li>
-                ))}
-              </ul>
             )}
           </section>
         </div>

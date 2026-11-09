@@ -35,8 +35,10 @@ export function themeCss(t: ActiveTheme): string {
   if (t.font) {
     const fmt = t.font.url.split("?")[0].split(".").pop();
     const format = fmt === "woff2" ? "woff2" : fmt === "woff" ? "woff" : fmt === "otf" ? "opentype" : "truetype";
-    css.push(`@font-face{font-family:"YoinkTheme";src:url("${t.font.url}") format("${format}");font-display:swap}`);
-    const stack = `"YoinkTheme",var(--font-jakarta),ui-sans-serif,system-ui,sans-serif`;
+    // One family name per theme (ids are [a-z0-9-]), so switching between two themes with fonts never reuses the first.
+    const family = `YoinkTheme-${t.id}`;
+    css.push(`@font-face{font-family:"${family}";src:url("${t.font.url}") format("${format}");font-display:swap}`);
+    const stack = `"${family}",var(--font-jakarta),ui-sans-serif,system-ui,sans-serif`;
     css.push(t.font.use === "all" ? `html,body{font-family:${stack}}` : `h1,h2,h3,[data-slot=card-title]{font-family:${stack}}`);
   }
   if (t.images.background) {
