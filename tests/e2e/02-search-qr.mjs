@@ -25,7 +25,7 @@ const svg = a.locator("svg").filter({ has: a.locator("image") }).first();
 ok(await svg.count() === 1, "QR renders with logo image");
 const png = PNG.sync.read(await svg.screenshot({ path: "shots/qr-logo.png" }));
 const res = jsQR(new Uint8ClampedArray(png.data), png.width, png.height);
-ok(res?.data === B + "/lot/1", `logo QR still decodes (${res?.data})`);
+ok(new RegExp("^" + B + "/i/[0-9a-z]{12}$").test(res?.data ?? ""), `logo QR still decodes to a secret item link (${res?.data})`);
 await a.screenshot({ path: "shots/qr-page.png" });
 await a.locator("#qrColor").evaluate((e) => { e.value = "#4c3a9e"; e.dispatchEvent(new Event("input", { bubbles: true })); });
 await a.getByLabel("Remove current logo").click(); await a.getByRole("button", { name: "Save" }).click(); await a.waitForTimeout(1200);

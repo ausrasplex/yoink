@@ -9,12 +9,13 @@ await a.getByRole("button", { name: "Sign in" }).click(); await a.waitForTimeout
 await a.goto(B + "/admin");
 await a.getByRole("link", { name: "QR code for lot 2" }).click(); await a.waitForURL(/\/admin\/items\/.+#qr/);
 const qr = a.getByTestId("item-qr");
+const secret = new RegExp("^" + B + "/i/[0-9a-z]{12}$"); // QR codes print the item's secret link, not /lot/<n>
 ok(await qr.isVisible(), "QR card on item page");
 const img = PNG.sync.read(await qr.screenshot());
-ok(jsQR(new Uint8ClampedArray(img.data), img.width, img.height)?.data === B + "/lot/2", "item QR decodes to lot 2");
+ok(secret.test(jsQR(new Uint8ClampedArray(img.data), img.width, img.height)?.data ?? ""), "item QR decodes to its secret link");
 const [d] = await Promise.all([a.waitForEvent("download"), a.getByRole("button", { name: "PNG" }).click()]);
 const f = await d.path(); const png = PNG.sync.read(fs.readFileSync(f));
-ok(d.suggestedFilename() === "lot-2-qr.png" && jsQR(new Uint8ClampedArray(png.data), png.width, png.height)?.data === B + "/lot/2", `PNG download decodes (${png.width}px)`);
+ok(d.suggestedFilename() === "lot-2-qr.png" && secret.test(jsQR(new Uint8ClampedArray(png.data), png.width, png.height)?.data ?? ""), `PNG download decodes (${png.width}px)`);
 const [d2] = await Promise.all([a.waitForEvent("download"), a.getByRole("button", { name: "SVG" }).click()]);
 ok(fs.readFileSync(await d2.path(), "utf8").startsWith("<svg"), "SVG download");
 await a.screenshot({ path: "shots/item-qr.png" });

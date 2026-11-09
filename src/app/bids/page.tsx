@@ -8,6 +8,7 @@ import { bidStatus, ItemThumb, StatusBadge } from "@/components/item-card";
 import { ListingClock } from "@/components/countdown";
 import { WinCelebration } from "@/components/theme/win-celebration";
 import { Button } from "@/components/ui/button";
+import { canBrowse, getAuction } from "@/lib/auction";
 import { requireUser } from "@/lib/auth";
 import { money } from "@/lib/format";
 import { getMyBids } from "@/lib/user-data";
@@ -17,7 +18,8 @@ export const dynamic = "force-dynamic";
 export default async function BidsPage({ searchParams }: { searchParams: Promise<{ filter?: string }> }) {
   const user = await requireUser("/bids");
   const { filter = "all" } = await searchParams;
-  const everything = await getMyBids(user.id);
+  const [everything, auction] = await Promise.all([getMyBids(user.id), getAuction()]);
+  const browse = canBrowse(user.role, auction);
   // Claimed (won and collected) and archived (didn't win) items live in their own tab, out of the way.
   const archived = everything.filter((b) => b.archived);
   const all = everything.filter((b) => !b.archived);
@@ -52,7 +54,9 @@ export default async function BidsPage({ searchParams }: { searchParams: Promise
               Once an item ends, press Claimed when you&apos;ve collected one you won, or Archive for one you didn&apos;t, to move it here.
             </p>
           )}
-          {!everything.length && <Button asChild className="mt-4"><Link href="/items">Browse items</Link></Button>}
+          {!everything.length && (browse
+            ? <Button asChild className="mt-4"><Link href="/items">Browse items</Link></Button>
+            : <p className="mt-1 text-sm text-muted-foreground">Scan the QR code on an item to see it and bid.</p>)}
         </div>
       ) : (
         <ul className="space-y-3">

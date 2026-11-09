@@ -68,7 +68,7 @@ press **Claimed** to move it to their **Claimed** tab (with Undo); only the winn
 ## QR codes & search
 On **QR codes**, tick the codes you want (or *Select all*) and *Print selected*: only those codes are printed, over as many
 pages as needed.
-Every item gets a QR code automatically (it just encodes `APP_URL/lot/<number>`), so new items show up on **QR codes** straight away. Each item's admin page also shows its code with PNG/SVG downloads (or use the QR icon on the Manage items row). On that page you can add a centre logo (SVG, PNG, JPEG or WebP) and change the code colour; with a logo the error-correction level is raised so codes still scan. Test-scan one printed code after changing them. Items and Manage items both have a search box (name or lot number).
+Every item gets a QR code automatically (it encodes `APP_URL/i/<code>`, a random code per item, which opens the item page `/lot/<number>`), so new items show up on **QR codes** straight away. Each item's admin page also shows its code with PNG/SVG downloads (or use the QR icon on the Manage items row). On that page you can add a centre logo (SVG, PNG, JPEG or WebP) and change the code colour; with a logo the error-correction level is raised so codes still scan. Test-scan one printed code after changing them. Items and Manage items both have a search box (name or lot number).
 
 ## UI
 Every page title has its menu icon on the left (`PageTitle icon=`). Tables (Manage items, Archive, Users, Bid history,

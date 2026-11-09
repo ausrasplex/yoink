@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { after } from "next/server";
 import { getUser } from "@/lib/auth";
 import { placeBid, type BidResult } from "@/lib/bids";
+import { canOpenLot } from "@/lib/item-access";
 import { sendOutbidEmail } from "@/lib/mail";
 import { notifyOutbid } from "@/lib/notifications";
 
@@ -12,6 +13,7 @@ export async function placeBidAction(lot: number, amount: number): Promise<BidRe
   if (!user) return { ok: false, error: "Your session expired. Please sign in again." };
   if (user.mustChangePassword) return { ok: false, error: "Please change your temporary password first." };
   if (user.role === "SERVER_ADMIN") return { ok: false, error: "The server admin account can't bid." };
+  if (!Number.isInteger(lot) || !(await canOpenLot(user, lot))) return { ok: false, error: "Scan the item's QR code to bid on it." };
   const result = await placeBid(lot, user.id, amount);
   if (!result.ok) return result;
   revalidatePath("/");

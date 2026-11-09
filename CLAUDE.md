@@ -5,7 +5,7 @@
 Context for Claude Code working on this repo. Read this first, then `README.md` for user-facing behaviour.
 
 ## What it is
-A self-hosted silent auction web app. Guests scan a QR code on an item → `/lot/<n>` → sign in or register → bid.
+A self-hosted silent auction web app. Guests scan a QR code on an item → `/i/<secret code>` (sign in or register) → `/lot/<n>` → bid.
 Each bid must be ≥ current bid + the item's minimum increment (or ≥ starting bid if no bids). Three roles, **not** a hierarchy:
 **SERVER_ADMIN** (exactly one, always the first account: server settings — branding, SMTP, env status — and managing admins; no
 auction content, can't bid), **ADMIN** (items, users, QR codes, bid history, auction setup; manages USERs only) and
@@ -78,6 +78,12 @@ Money is **whole dollars** (Int).
   `next` is /server, /settings or /account/password, so pass an accurate `next`. Account actions check `canManageUser(me, target)`.
 - **Listings:** every item has its own window; there is no auction-wide close. Any query that lists items for Users must
   apply `visibleToUsers()` (Admins see hidden scheduled listings). Bids check the window inside the locked transaction.
+- **Items page switch** (`Auction.itemsPageEnabled`, Admin Settings → Items page): off = Users reach items only by QR code
+  (or My Bids). Anything that lets Users browse, search or discover items (menu, search, /items, "All items" link, popular/hot
+  lists, new-item notifications and digest) must check `canBrowse(role, auction)` from src/lib/auction.ts. Admins always can.
+  Item page, its status API and bidding check `canOpenLot()` (src/lib/item-access.ts): with the switch off, a User needs an
+  ItemAccess row (written when they open the QR link /i/<Item.code>) or a bid. QR codes always print the /i/<code> link;
+  new items get `newItemCode()` (src/lib/item-code.ts), and the database default covers any other insert.
 - Until a server admin exists, /login and /register redirect to /setup and registration is refused.
 - **Timezone:** Prisma `DateTime` columns are `timestamp without time zone` holding UTC. In raw SQL always use
   `(now() AT TIME ZONE 'utc')`, never bare `now()` — the DB server's timezone may not be UTC (it broke lockouts once).

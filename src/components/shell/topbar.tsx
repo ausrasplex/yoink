@@ -25,15 +25,17 @@ export function Brand({ name, logo, logoWide, center = false }: { name: string; 
 
 export function TopBar(p: {
   brand: string; logo: string | null; logoWide: string | null; name: string; email: string; avatar: string | null; role: Role;
+  browse: boolean; // may search all items (off for Users when the Admins turn the Items page off)
   notifications: { unread: number; items: NotificationRow[] } | null; // bidders only
 }) {
   const installMode = useInstallMode();
   const bidder = p.role !== "SERVER_ADMIN"; // the server admin has no items to search or bids to watch
+  const search = bidder && p.browse;
   return (
     // AppShell makes this sticky (full-width strip: semi-opaque, blurred, line underneath).
     <header className="flex items-center gap-3 px-4 py-3 lg:px-10 lg:py-4">
       <div className="min-w-0 lg:hidden"><Brand name={p.brand} logo={p.logo} logoWide={p.logoWide} /></div>
-      {bidder && <form action="/items" method="get" role="search" className="relative ml-auto hidden max-w-sm flex-1 sm:block lg:ml-0">
+      {search && <form action="/items" method="get" role="search" className="relative ml-auto hidden max-w-sm flex-1 sm:block lg:ml-0">
         <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
         <input
           name="q"
@@ -44,12 +46,12 @@ export function TopBar(p: {
         />
       </form>}
       <div className="ml-auto flex items-center gap-2">
-        {bidder && <>
-        <Link href="/items" aria-label="Search" className="grid size-10 place-items-center rounded-full bg-white sm:hidden">
-          <Search className="size-[18px]" />
-        </Link>
-        {p.notifications && <NotificationBell initial={p.notifications} />}
-        </>}
+        {search && (
+          <Link href="/items" aria-label="Search" className="grid size-10 place-items-center rounded-full bg-white sm:hidden">
+            <Search className="size-[18px]" />
+          </Link>
+        )}
+        {bidder && p.notifications && <NotificationBell initial={p.notifications} />}
         <DropdownMenu>
           <DropdownMenuTrigger className="rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50" aria-label="Account menu">
             <UserAvatar name={p.name} avatar={p.avatar} className="size-10" textClassName="text-sm" />

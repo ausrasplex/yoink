@@ -27,6 +27,9 @@ export async function runDigestIfDue(now = new Date()): Promise<{ sent: number; 
   const claimed = await db.auction.updateMany({ where: { id: 1, lastDigestAt: prev }, data: { lastDigestAt: now } });
   if (claimed.count !== 1) return null;
 
+  // Items page switched off: Users only find items by QR code, so no list of new ones (today counts as done).
+  if (!a.itemsPageEnabled) return { sent: 0, items: 0 };
+
   const since = prev ?? new Date(now.getTime() - 86_400_000);
   const items = await db.item.findMany({
     where: {

@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  saveAccessAction, saveNotificationsAction, saveTermsAction, type SettingsState,
+  saveAccessAction, saveBrowsingAction, saveNotificationsAction, saveTermsAction, type SettingsState,
 } from "@/app/admin/settings-actions";
 
 export function Status({ state }: { state: SettingsState }) {
@@ -59,6 +59,25 @@ export function AccessForm(p: { head: SectionHead; registrationOpen: boolean; ma
         Counted per email address, and per network address at five times this limit. The count resets after the same number of
         minutes, or on a successful sign-in. Admins can unlock someone early from the Users page.
       </p>
+      <FormActions where="footer" {...a} />
+    </form>
+    </SectionCard>
+  );
+}
+
+export function BrowsingForm({ head, itemsPageEnabled }: { head: SectionHead; itemsPageEnabled: boolean }) {
+  const [state, action, pending] = useActionState(saveBrowsingAction, undefined);
+  const id = useId();
+  const a = { form: id, pending, status: <Status state={state} /> };
+  return (
+    <SectionCard {...head} action={<FormActions where="header" {...a} />}>
+    <form id={id} action={action} className="space-y-4">
+      <Check
+        name="itemsPageEnabled"
+        defaultChecked={itemsPageEnabled}
+        label="Users can browse all items"
+        hint="The Items page, search, popular items on the dashboard and new-item alerts and emails. Turn off so Users can only open an item by scanning its printed QR code (items they've bid on stay in My Bids). Admins always see everything."
+      />
       <FormActions where="footer" {...a} />
     </form>
     </SectionCard>

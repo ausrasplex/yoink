@@ -1,5 +1,6 @@
 import { AppFooter } from "@/components/app-footer";
 import type { Role } from "@/lib/format";
+import { canBrowse, getAuction } from "@/lib/auction";
 import { listNotifications } from "@/lib/notifications";
 import { getShellInfo } from "@/lib/user-data";
 import { MobileNav, SidebarNav } from "./nav";
@@ -8,16 +9,18 @@ import { Brand, TopBar } from "./topbar";
 type ShellUser = { id: string; name: string; email: string; role: Role; avatar?: string | null };
 
 export async function AppShell({ user, children }: { user: ShellUser; children: React.ReactNode }) {
-  const [info, notifications] = await Promise.all([
+  const [info, notifications, auction] = await Promise.all([
     getShellInfo(user.id),
     user.role === "SERVER_ADMIN" ? null : listNotifications(user.id), // the server admin doesn't bid
+    getAuction(),
   ]);
+  const browse = canBrowse(user.role, auction); // Items page, search (Users lose them when the Admins switch it off)
   return (
     // Full-width frame: the sidebar sits on the left edge; the top bar and page share one centred content container.
     <div className="min-h-dvh w-full lg:flex">
       <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col border-r border-border/70 px-6 py-8 lg:flex">
         <div className="mb-10"><Brand name={info.name} logo={info.logo} logoWide={info.logoWide} center /></div>
-        <div className="flex-1 overflow-y-auto"><SidebarNav role={user.role} /></div>
+        <div className="flex-1 overflow-y-auto"><SidebarNav role={user.role} browse={browse} /></div>
       </aside>
       {/* overflow-x-clip: if anything is ever too wide, clip it here instead of widening the whole page on phones
           (a wider page also drags the fixed bottom nav off-screen) */}
@@ -27,7 +30,7 @@ export async function AppShell({ user, children }: { user: ShellUser; children: 
             The strip spans the whole area right of the sidebar; its contents line up with the page's centred column. */}
         <div className="sticky top-0 z-30 border-b border-border bg-canvas/75 backdrop-blur-md">
           <div className="mx-auto w-full max-w-7xl">
-            <TopBar brand={info.name} logo={info.logo} logoWide={info.logoWide} name={user.name} email={user.email} avatar={user.avatar ?? null} role={user.role} notifications={notifications} />
+            <TopBar brand={info.name} logo={info.logo} logoWide={info.logoWide} name={user.name} email={user.email} avatar={user.avatar ?? null} role={user.role} browse={browse} notifications={notifications} />
           </div>
         </div>
         <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col">
@@ -36,7 +39,7 @@ export async function AppShell({ user, children }: { user: ShellUser; children: 
           <AppFooter name={info.name} className="px-4 pb-28 pt-10 lg:px-10 lg:pb-8" />
         </div>
       </div>
-      <MobileNav role={user.role} alert={info.outbid > 0} />
+      <MobileNav role={user.role} alert={info.outbid > 0} browse={browse} />
     </div>
   );
 }

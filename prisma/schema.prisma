@@ -30,6 +30,7 @@ model User {
   passwordResets     PasswordReset[]
   invitesSent        Invite[]        @relation("InvitesSent")
   bidArchives        BidArchive[]
+  itemAccess         ItemAccess[]
   notifications      Notification[]
 }
 
@@ -62,6 +63,9 @@ model Auction {
   theme           String  @default("auto") // "auto" (by each theme's dates) or a theme id to always show — see src/lib/theme
 
   registrationOpen Boolean @default(true)
+  // Users can browse and search all listings (Items page). Off: they reach an item only from its QR code (or from
+  // My Bids once they've bid on it). Admins always can. See canBrowse() in src/lib/auction.ts.
+  itemsPageEnabled Boolean @default(true)
   terms            String  @default("")
   qrLogo           String?
   qrColor          String  @default("#2a2742")
@@ -97,6 +101,8 @@ model LoginAttempt {
 model Item {
   id           String       @id @default(cuid())
   lot          Int          @unique @default(autoincrement())
+  // Secret part of the QR link (/i/<code>). The app sets it (src/lib/item-code.ts); the database default covers anything else.
+  code         String       @unique @default(dbgenerated("substr(replace((gen_random_uuid())::text, '-'::text, ''::text), 1, 12)"))
   title        String
   description  String       @default("")
   startingBid  Int // whole dollars
@@ -107,6 +113,7 @@ model Item {
   createdAt    DateTime     @default(now())
   images       ItemImage[]
   bids         Bid[]
+  access       ItemAccess[]
   bidArchives  BidArchive[]
 
   // Each item is its own listing with its own bidding window (UTC). Admins set both; see src/lib/listing.ts.
@@ -170,6 +177,21 @@ model Invite {
 }
 
 // A bidder tidied an ended item they didn't win out of My Bids (Archive). Winners use Item.claimedAt instead.
+/**
+ * A User scanned this item's QR code (/i/<code>). With the Items page switched off, Users can open only items they've
+ * scanned or bid on, so typing /lot/<n> isn't enough. See canOpenLot() in src/lib/item-access.ts.
+ */
+model ItemAccess {
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  itemId    String
+  item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([userId, itemId])
+  @@index([itemId])
+}
+
 model BidArchive {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)

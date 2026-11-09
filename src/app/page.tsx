@@ -13,7 +13,7 @@ import { listingTime, openNow } from "@/lib/listing";
 import { getBidActivity, getMyBids } from "@/lib/user-data";
 import { WinCelebration } from "@/components/theme/win-celebration";
 import { InstallCard } from "@/components/install/install-ui";
-import { getAuction } from "@/lib/auction";
+import { canBrowse, getAuction } from "@/lib/auction";
 import { brandImages } from "@/lib/brand";
 
 export const dynamic = "force-dynamic";
@@ -28,17 +28,21 @@ export default async function Dashboard() {
   const brand = await getAuction();
   const appIcon = (await brandImages(brand)).logo ?? "/icon-192.png";
   const now = new Date();
+  // Items page switched off for Users: nothing here may lead to items they haven't found by QR code themselves —
+  // no popular/hot items, and "ending soonest" only among items they've bid on.
+  const browse = canBrowse(user.role, brand);
+  const mineOnly = browse ? {} : { bids: { some: { userId: user.id } } };
   const [mine, activity, hot, openCount, endingNext, startingNext] = await Promise.all([
     getMyBids(user.id),
     getBidActivity(),
-    db.item.findMany({ // popular listings that can still be bid on
+    !browse ? [] : db.item.findMany({ // popular listings that can still be bid on
       where: openNow(now),
       orderBy: [{ bids: { _count: "desc" } }, { endsAt: "asc" }], take: 3,
       include: { images: { take: 1, orderBy: { position: "asc" } }, _count: { select: { bids: true } } },
     }),
     db.item.count({ where: openNow(now) }),
-    db.item.findFirst({ where: openNow(now), orderBy: { endsAt: "asc" }, select: { lot: true, title: true, endsAt: true } }),
-    db.item.findFirst({ // nothing open: the next listing Users are allowed to see coming
+    db.item.findFirst({ where: { ...openNow(now), ...mineOnly }, orderBy: { endsAt: "asc" }, select: { lot: true, title: true, endsAt: true } }),
+    !browse ? null : db.item.findFirst({ // nothing open: the next listing Users are allowed to see coming
       where: { startsAt: { gt: now }, ...(user.role === "ADMIN" ? {} : { hiddenUntilStart: false }) },
       orderBy: { startsAt: "asc" }, select: { lot: true, title: true, startsAt: true },
     }),
@@ -63,7 +67,8 @@ export default async function Dashboard() {
     : outbid > 0 ? "You've been outbid on everything"
     : won.length > 0 ? `You won ${plural(won.length)}!`
     : "Your listings have ended";
-  const sub = mine.length === 0 || open.length === 0
+  const sub = mine.length === 0 && !browse ? "Scan the QR code on an item to see it and bid."
+    : mine.length === 0 || open.length === 0
     ? `${plural(openCount)} ${openCount === 1 ? "is" : "are"} open for bidding.`
     : outbid > 0 ? `Outbid on ${outbid} — time to bid again.` : null; // the greeting above already says hi
 
@@ -78,9 +83,11 @@ export default async function Dashboard() {
             <p className="text-base font-bold text-lime sm:text-lg">{t("welcomeBack", { first, name: user.name })}</p>
             <h2 className="mt-3 text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">{headline}</h2>
             {sub && <p className="mt-2 text-sm text-white/60">{sub}</p>}
-            <Button asChild variant="soft" className="mt-6 uppercase tracking-wide text-xs">
-              <Link href={mine.length ? "/bids" : "/items"}>See all <ArrowUpRight /></Link>
-            </Button>
+            {(mine.length > 0 || browse) && (
+              <Button asChild variant="soft" className="mt-6 uppercase tracking-wide text-xs">
+                <Link href={mine.length ? "/bids" : "/items"}>See all <ArrowUpRight /></Link>
+              </Button>
+            )}
           </div>
           <div className="-mx-6 flex gap-3 overflow-x-auto px-6 pb-1 sm:-mx-8 sm:px-8 lg:mx-0 lg:overflow-visible lg:px-0 lg:pb-0">
             {heroCards.map((c, i) => (
@@ -136,49 +143,53 @@ export default async function Dashboard() {
         </div>
 
         <div className="space-y-8">
-          <section className="rounded-3xl bg-ink p-5 text-white">
-            {endingNext ? (
-              <>
-                <p className="text-sm font-bold text-white/70">Ending soonest</p>
-                <Link href={`/lot/${endingNext.lot}`} className="mt-1 block truncate font-extrabold hover:underline">Lot {endingNext.lot} · {endingNext.title}</Link>
-                <div className="mt-3"><Countdown to={endingNext.endsAt.toISOString()} /></div>
-                <p className="mt-3 text-xs text-white/60">{listingTime(endingNext.endsAt)}</p>
-              </>
-            ) : startingNext ? (
-              <>
-                <p className="text-sm font-bold text-white/70">Next listing opens in</p>
-                <Link href={`/lot/${startingNext.lot}`} className="mt-1 block truncate font-extrabold hover:underline">Lot {startingNext.lot} · {startingNext.title}</Link>
-                <div className="mt-3"><Countdown to={startingNext.startsAt.toISOString()} /></div>
-                <p className="mt-3 text-xs text-white/60">{listingTime(startingNext.startsAt)}</p>
-              </>
-            ) : (
-              <>
-                <p className="text-sm font-bold text-white/70">Bidding</p>
-                <p className="mt-2 text-2xl font-extrabold tracking-tight">Nothing open right now</p>
-              </>
-            )}
-          </section>
-          <section>
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-extrabold text-ink">Hot items</h2>
-              <Link href="/items" className="text-xs font-semibold text-muted-foreground hover:text-ink">View all</Link>
-            </div>
-            <ul className="space-y-3">
-              {hot.map((h) => (
-                <li key={h.id}>
-                  <Link href={`/lot/${h.lot}`} className="flex items-center gap-3 rounded-3xl bg-white p-3 pr-4 transition-shadow hover:shadow-lg hover:shadow-ink/10">
-                    <ItemThumb lot={h.lot} image={h.images[0]?.filename ?? null} className="size-12 shrink-0 rounded-2xl" />
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-xs text-muted-foreground">Lot {h.lot} · {h._count.bids} bids</p>
-                      <p className="truncate text-sm font-bold text-ink">{h.title}</p>
-                    </div>
-                    <span className="text-sm font-extrabold tabular-nums text-ink">{money(h.currentBid ?? h.startingBid)}</span>
-                  </Link>
-                </li>
-              ))}
-              {hot.length === 0 && <li className="rounded-3xl bg-white p-5 text-sm text-muted-foreground">No items yet.</li>}
-            </ul>
-          </section>
+          {(browse || endingNext) && (
+            <section className="rounded-3xl bg-ink p-5 text-white">
+              {endingNext ? (
+                <>
+                  <p className="text-sm font-bold text-white/70">Ending soonest</p>
+                  <Link href={`/lot/${endingNext.lot}`} className="mt-1 block truncate font-extrabold hover:underline">Lot {endingNext.lot} · {endingNext.title}</Link>
+                  <div className="mt-3"><Countdown to={endingNext.endsAt.toISOString()} /></div>
+                  <p className="mt-3 text-xs text-white/60">{listingTime(endingNext.endsAt)}</p>
+                </>
+              ) : startingNext ? (
+                <>
+                  <p className="text-sm font-bold text-white/70">Next listing opens in</p>
+                  <Link href={`/lot/${startingNext.lot}`} className="mt-1 block truncate font-extrabold hover:underline">Lot {startingNext.lot} · {startingNext.title}</Link>
+                  <div className="mt-3"><Countdown to={startingNext.startsAt.toISOString()} /></div>
+                  <p className="mt-3 text-xs text-white/60">{listingTime(startingNext.startsAt)}</p>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm font-bold text-white/70">Bidding</p>
+                  <p className="mt-2 text-2xl font-extrabold tracking-tight">Nothing open right now</p>
+                </>
+              )}
+            </section>
+          )}
+          {browse && (
+            <section>
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-lg font-extrabold text-ink">Hot items</h2>
+                <Link href="/items" className="text-xs font-semibold text-muted-foreground hover:text-ink">View all</Link>
+              </div>
+              <ul className="space-y-3">
+                {hot.map((h) => (
+                  <li key={h.id}>
+                    <Link href={`/lot/${h.lot}`} className="flex items-center gap-3 rounded-3xl bg-white p-3 pr-4 transition-shadow hover:shadow-lg hover:shadow-ink/10">
+                      <ItemThumb lot={h.lot} image={h.images[0]?.filename ?? null} className="size-12 shrink-0 rounded-2xl" />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-xs text-muted-foreground">Lot {h.lot} · {h._count.bids} bids</p>
+                        <p className="truncate text-sm font-bold text-ink">{h.title}</p>
+                      </div>
+                      <span className="text-sm font-extrabold tabular-nums text-ink">{money(h.currentBid ?? h.startingBid)}</span>
+                    </Link>
+                  </li>
+                ))}
+                {hot.length === 0 && <li className="rounded-3xl bg-white p-5 text-sm text-muted-foreground">No items yet.</li>}
+              </ul>
+            </section>
+          )}
         </div>
       </div>
       <WinCelebration lots={won.map((b) => b.lot)} />

@@ -3,6 +3,8 @@ import { SearchBox } from "@/components/search-box";
 import { AppShell, PageTitle } from "@/components/shell/app-shell";
 import { FilterChips } from "@/components/filter-chips";
 import { ItemCard, type Status } from "@/components/item-card";
+import { redirect } from "next/navigation";
+import { canBrowse, getAuction } from "@/lib/auction";
 import { requireUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { phaseOf, visibleToUsers } from "@/lib/listing";
@@ -11,6 +13,7 @@ export const dynamic = "force-dynamic";
 
 export default async function ItemsPage({ searchParams }: { searchParams: Promise<{ q?: string; filter?: string }> }) {
   const user = await requireUser("/items");
+  if (!canBrowse(user.role, await getAuction())) redirect("/"); // Items page switched off for Users: QR codes only
   const { q = "", filter = "all" } = await searchParams;
   const term = q.trim().slice(0, 80);
   const lotNo = /^\d+$/.test(term) ? Number(term) : undefined;

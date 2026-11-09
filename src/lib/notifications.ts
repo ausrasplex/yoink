@@ -90,6 +90,9 @@ export async function announceNewListings(now = new Date()): Promise<number> {
   const items = claimed.count === fresh.length ? fresh
     : await db.item.findMany({ where: { id: { in: fresh.map((i) => i.id) }, announcedAt: now }, select: { id: true, lot: true, title: true } });
   if (!items.length) return 0;
+  // Items page switched off: Users only find items by QR code, so don't point them at new ones. The listings stay
+  // claimed (announcedAt), so switching it back on doesn't send a burst of old announcements.
+  if (!(await db.auction.findUnique({ where: { id: 1 }, select: { itemsPageEnabled: true } }))?.itemsPageEnabled) return 0;
   const users = await db.user.findMany({ where: { role: "USER" }, select: { id: true } });
   const one = items.length === 1 ? items[0] : null;
   const res = await db.notification.createMany({

@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
  * (unselected cards are hidden in the print layout), across as many pages as they need.
  */
 export function QrSheet({ items, base, color, logo }: {
-  items: { lot: number; title: string }[]; base: string; color: string; logo: string | null;
+  items: { lot: number; title: string; code: string }[]; base: string; color: string; logo: string | null;
 }) {
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const n = selected.size;
@@ -47,7 +47,7 @@ export function QrSheet({ items, base, color, logo }: {
               )}>
               <input type="checkbox" checked={on} onChange={() => toggle(i.lot)} aria-label={`Select lot ${i.lot}`}
                 className="absolute left-4 top-4 size-5 accent-ink print:hidden" />
-              <QRCodeSVG value={`${base}/lot/${i.lot}`} size={160} marginSize={2} level={logo ? "H" : "M"} fgColor={color}
+              <QRCodeSVG value={`${base}/i/${i.code}`} size={160} marginSize={2} level={logo ? "H" : "M"} fgColor={color}
                 imageSettings={logo ? { src: logo, height: 38, width: 38, excavate: true } : undefined} />
               <p className="text-lg font-extrabold text-ink">Lot {i.lot}</p>
               <p className="text-sm text-muted-foreground">{i.title}</p>

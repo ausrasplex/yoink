@@ -26,6 +26,13 @@ export async function saveAccessAction(_: SettingsState, form: FormData): Promis
   return { saved: true };
 }
 
+/** Admin: the Items page switch (whether Users can browse and search all listings). */
+export async function saveBrowsingAction(_: SettingsState, form: FormData): Promise<SettingsState> {
+  await requireAdmin();
+  await update({ itemsPageEnabled: form.get("itemsPageEnabled") === "on" });
+  return { saved: true };
+}
+
 /**
  * Admin: which emails the app sends. They go out through the Server Admin's SMTP connection; this only decides
  * whether they're sent. emailEnabled is the master switch (off = nothing is sent, whatever the others say).

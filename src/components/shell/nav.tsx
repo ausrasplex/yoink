@@ -26,6 +26,9 @@ export const adminItems: Item[] = [
   { href: "/admin/settings", label: "Settings", icon: SlidersHorizontal },
 ];
 
+/** The everyday menu; without the Items page when this person can't browse (Users, with the Admins' switch off). */
+const everyday = (browse: boolean) => (browse ? userItems : userItems.filter((i) => i.href !== "/items"));
+
 const isActive = (item: Item, path: string) => (item.match ? item.match(path) : path.startsWith(item.href));
 
 function Group({ items, path }: { items: Item[]; path: string }) {
@@ -61,14 +64,14 @@ const serverItems: Item[] = [
   { href: "/settings", label: "Account", icon: CircleUser },
 ];
 
-export function SidebarNav({ role }: { role: Role }) {
+export function SidebarNav({ role, browse }: { role: Role; browse: boolean }) {
   const path = usePathname();
   if (role === "SERVER_ADMIN") {
     return <nav><Group items={serverItems} path={path} /></nav>;
   }
   return (
     <nav className="space-y-8">
-      <Group items={userItems} path={path} />
+      <Group items={everyday(browse)} path={path} />
       {role === "ADMIN" && (
         <div className="space-y-2">
           <p className="px-3 text-[11px] font-bold uppercase tracking-widest text-muted-foreground/80">Admin</p>
@@ -79,10 +82,10 @@ export function SidebarNav({ role }: { role: Role }) {
   );
 }
 
-export function MobileNav({ role, alert }: { role: Role; alert: boolean }) {
+export function MobileNav({ role, alert, browse }: { role: Role; alert: boolean; browse: boolean }) {
   const path = usePathname();
   // The bar keeps the everyday pages; Admins reach the admin pages from the profile menu (TopBar) on phones.
-  const items = role === "SERVER_ADMIN" ? serverItems : userItems;
+  const items = role === "SERVER_ADMIN" ? serverItems : everyday(browse);
   return (
     <nav className="fixed inset-x-3 bottom-3 z-40 rounded-full bg-ink p-1.5 shadow-lg lg:hidden" aria-label="Main">
       {/* p-1.5 on the bar + justify-between: the gap at each end matches the gap above and below the buttons */}

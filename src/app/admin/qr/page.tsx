@@ -6,6 +6,7 @@ import { requireAdmin } from "@/lib/auth";
 import { QrOptions } from "@/components/admin/qr-options";
 import { getAuction } from "@/lib/auction";
 import { db } from "@/lib/db";
+import { itemCodePath } from "@/lib/item-code";
 import { logoDataUri, qrBase } from "@/lib/qr";
 
 export const dynamic = "force-dynamic";
@@ -15,7 +16,7 @@ export default async function QrPage() {
   const h = await headers();
   const base = qrBase(h);
   const [items, auction] = await Promise.all([
-    db.item.findMany({ orderBy: { lot: "asc" }, select: { lot: true, title: true } }),
+    db.item.findMany({ orderBy: { lot: "asc" }, select: { lot: true, title: true, code: true } }),
     getAuction(),
   ]);
   const logo = await logoDataUri(auction.qrLogo);
@@ -28,7 +29,7 @@ export default async function QrPage() {
           <QrOptions
             head={{ title: "Customise codes", desc: "Codes are created automatically for every item — new items appear here straight away." }}
             color={auction.qrColor} logo={logo}
-            demoUrl={items[0] ? `${base}/lot/${items[0].lot}` : `${base}/items`}
+            demoUrl={items[0] ? `${base}${itemCodePath(items[0].code)}` : `${base}/i/demo2k7m9x4r`}
           />
         </div>
       </div>

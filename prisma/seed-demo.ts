@@ -9,6 +9,7 @@ import crypto from "node:crypto";
 import zlib from "node:zlib";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { newItemCode } from "../src/lib/item-code";
 
 const db = new PrismaClient();
 const uploadDir = path.resolve(process.env.UPLOAD_DIR ?? "./data/uploads");
@@ -108,7 +109,7 @@ async function main() {
 
   for (const [n, it] of items.entries()) {
     const item = await db.item.create({ data: {
-      title: it.title, description: it.description, startingBid: it.start, minIncrement: it.inc,
+      title: it.title, description: it.description, startingBid: it.start, minIncrement: it.inc, code: newItemCode(),
       startsAt: new Date(Date.now() - 2 * 86_400_000), endsAt: new Date(Date.now() + (2 * 24 + 4) * 3600_000 + 17 * 60_000),
     } });
     for (let v = 0; v < it.imgs; v++) await db.itemImage.create({ data: { itemId: item.id, filename: saveImage(n, v), position: v } });

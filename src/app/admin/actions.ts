@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { newItemCode } from "@/lib/item-code";
 import { deleteImageFile, saveImage } from "@/lib/uploads";
 
 export type AdminState = { error?: string; saved?: boolean } | undefined;
@@ -43,7 +44,7 @@ export async function saveItemAction(id: string | null, _: AdminState, form: For
     const updated = await db.item.updateMany({ where: { id }, data: parsed.data });
     if (updated.count === 0) return { error: "Item not found." };
   } else {
-    itemId = (await db.item.create({ data: parsed.data })).id;
+    itemId = (await db.item.create({ data: { ...parsed.data, code: newItemCode() } })).id;
   }
 
   if (names.length) {

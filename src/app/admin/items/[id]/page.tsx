@@ -9,6 +9,7 @@ import { getAuction } from "@/lib/auction";
 import { requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { defaultWindow } from "@/lib/listing";
+import { itemCodePath } from "@/lib/item-code";
 import { logoDataUri, qrBase } from "@/lib/qr";
 
 export const dynamic = "force-dynamic";
@@ -46,7 +47,7 @@ export default async function AdminItemPage({ params }: { params: Promise<{ id: 
             defaults={{ startsAt: defaults.startsAt.toISOString(), endsAt: defaults.endsAt.toISOString() }}
           />
         </div>
-        {item && auction && <ItemQr url={`${base}/lot/${item.lot}`} lot={item.lot} color={auction.qrColor} logo={logo} />}
+        {item && auction && <ItemQr url={`${base}${itemCodePath(item.code)}`} lot={item.lot} color={auction.qrColor} logo={logo} />}
       </div>
     </AppShell>
   );

@@ -6,8 +6,9 @@ import { BidPanel } from "@/components/bid-panel";
 import { AppShell } from "@/components/shell/app-shell";
 import { tintFor } from "@/components/item-card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { getAuction } from "@/lib/auction";
+import { canBrowse, getAuction } from "@/lib/auction";
 import { requireUser } from "@/lib/auth";
+import { canOpenLot } from "@/lib/item-access";
 import { db } from "@/lib/db";
 import { getLotStatus } from "@/lib/status";
 
@@ -15,8 +16,9 @@ export const dynamic = "force-dynamic";
 
 export default async function LotPage({ params }: { params: Promise<{ lot: string }> }) {
   const lotNo = Number((await params).lot);
-  const user = await requireUser(`/lot/${lotNo}`); // scanning the QR while logged out returns here after login
+  const user = await requireUser(`/lot/${lotNo}`); // QR codes go via /i/<code>, which signs in first and then lands here
   if (!Number.isInteger(lotNo)) notFound();
+  if (!(await canOpenLot(user, lotNo))) notFound(); // Items page off: only items this User scanned or bid on
 
   const item = await db.item.findUnique({
     where: { lot: lotNo },
@@ -24,13 +26,17 @@ export default async function LotPage({ params }: { params: Promise<{ lot: strin
   });
   const status = item && (await getLotStatus(lotNo, user.id, user.role === "ADMIN"));
   if (!item || !status) notFound();
-  const { terms } = await getAuction();
+  const auction = await getAuction();
+  const { terms } = auction;
 
   return (
     <AppShell user={user}>
-      <Link href="/items" className="mb-4 inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-ink">
-        <ArrowLeft className="size-4" /> All items
-      </Link>
+      {/* No way back to the full list when Users can't browse it (they got here from a QR code) */}
+      {canBrowse(user.role, auction) && (
+        <Link href="/items" className="mb-4 inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-ink">
+          <ArrowLeft className="size-4" /> All items
+        </Link>
+      )}
       <div className="grid gap-6 lg:grid-cols-[1.25fr_1fr]">
         <div>
           {item.images.length > 0 ? (
