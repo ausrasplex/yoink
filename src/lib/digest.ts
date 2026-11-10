@@ -40,11 +40,11 @@ export async function runDigestIfDue(now = new Date()): Promise<{ sent: number; 
       ],
     },
     orderBy: { lot: "asc" },
-    select: { lot: true, title: true, startingBid: true, currentBid: true, startsAt: true, endsAt: true },
+    select: { lot: true, code: true, title: true, startingBid: true, currentBid: true, startsAt: true, endsAt: true },
   });
   if (!items.length) return { sent: 0, items: 0 };
   const sent = await sendNewItemsDigest(items.map((i) => ({
-    lot: i.lot, title: i.title, price: i.currentBid ?? i.startingBid, noBids: i.currentBid === null, startsAt: i.startsAt, endsAt: i.endsAt,
+    lot: i.lot, code: i.code, title: i.title, price: i.currentBid ?? i.startingBid, noBids: i.currentBid === null, startsAt: i.startsAt, endsAt: i.endsAt,
   })));
   console.log(`[digest] ${items.length} new item(s), sent to ${sent} user(s)`);
   return { sent, items: items.length };

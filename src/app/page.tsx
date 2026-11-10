@@ -15,6 +15,7 @@ import { WinCelebration } from "@/components/theme/win-celebration";
 import { InstallCard } from "@/components/install/install-ui";
 import { canBrowse, getAuction } from "@/lib/auction";
 import { brandImages } from "@/lib/brand";
+import { itemCodePath } from "@/lib/item-code";
 
 export const dynamic = "force-dynamic";
 
@@ -41,10 +42,10 @@ export default async function Dashboard() {
       include: { images: { take: 1, orderBy: { position: "asc" } }, _count: { select: { bids: true } } },
     }),
     db.item.count({ where: openNow(now) }),
-    db.item.findFirst({ where: { ...openNow(now), ...mineOnly }, orderBy: { endsAt: "asc" }, select: { lot: true, title: true, endsAt: true } }),
+    db.item.findFirst({ where: { ...openNow(now), ...mineOnly }, orderBy: { endsAt: "asc" }, select: { lot: true, code: true, title: true, endsAt: true } }),
     !browse ? null : db.item.findFirst({ // nothing open: the next listing Users are allowed to see coming
       where: { startsAt: { gt: now }, ...(user.role === "ADMIN" ? {} : { hiddenUntilStart: false }) },
-      orderBy: { startsAt: "asc" }, select: { lot: true, title: true, startsAt: true },
+      orderBy: { startsAt: "asc" }, select: { lot: true, code: true, title: true, startsAt: true },
     }),
   ]);
   const open = mine.filter((b) => b.phase === "open");
@@ -57,8 +58,8 @@ export default async function Dashboard() {
 
   // Hero cards: items needing attention first, then top up with popular items.
   const heroCards = [
-    ...mine.slice(0, 3).map((b) => ({ lot: b.lot, title: b.title, line: `${money(b.current)} · ${b.bidCount} bids`, pct: Math.min(100, Math.round((b.myBid / b.current) * 100)), tag: b.phase === "ended" ? (b.leading ? "Won" : "Ended") : b.leading ? "Winning" : "Outbid" })),
-    ...hot.filter((h) => !mine.some((b) => b.lot === h.lot)).map((h) => ({ lot: h.lot, title: h.title, line: `${money(h.currentBid ?? h.startingBid)} · ${h._count.bids} bids`, pct: null as number | null, tag: "Popular" })),
+    ...mine.slice(0, 3).map((b) => ({ lot: b.lot, code: b.code, title: b.title, line: `${money(b.current)} · ${b.bidCount} bids`, pct: Math.min(100, Math.round((b.myBid / b.current) * 100)), tag: b.phase === "ended" ? (b.leading ? "Won" : "Ended") : b.leading ? "Winning" : "Outbid" })),
+    ...hot.filter((h) => !mine.some((b) => b.lot === h.lot)).map((h) => ({ lot: h.lot, code: h.code, title: h.title, line: `${money(h.currentBid ?? h.startingBid)} · ${h._count.bids} bids`, pct: null as number | null, tag: "Popular" })),
   ].slice(0, 3);
 
   const plural = (n: number) => `${n} item${n === 1 ? "" : "s"}`;
@@ -93,7 +94,7 @@ export default async function Dashboard() {
             {heroCards.map((c, i) => (
               <Link
                 key={c.lot}
-                href={`/lot/${c.lot}`}
+                href={itemCodePath(c.code)}
                 className={`${heroTints[i % 3]} flex h-52 w-44 shrink-0 flex-col rounded-3xl p-4 text-ink transition-transform hover:-translate-y-1 sm:w-48 ${i === 2 ? "lg:translate-x-8" : ""} ${i === 0 ? "lg:-mt-8" : ""}`}
               >
                 <div className="flex items-center justify-between text-xs font-bold">
@@ -148,14 +149,14 @@ export default async function Dashboard() {
               {endingNext ? (
                 <>
                   <p className="text-sm font-bold text-white/70">Ending soonest</p>
-                  <Link href={`/lot/${endingNext.lot}`} className="mt-1 block truncate font-extrabold hover:underline">Lot {endingNext.lot} · {endingNext.title}</Link>
+                  <Link href={itemCodePath(endingNext.code)} className="mt-1 block truncate font-extrabold hover:underline">Lot {endingNext.lot} · {endingNext.title}</Link>
                   <div className="mt-3"><Countdown to={endingNext.endsAt.toISOString()} /></div>
                   <p className="mt-3 text-xs text-white/60">{listingTime(endingNext.endsAt)}</p>
                 </>
               ) : startingNext ? (
                 <>
                   <p className="text-sm font-bold text-white/70">Next listing opens in</p>
-                  <Link href={`/lot/${startingNext.lot}`} className="mt-1 block truncate font-extrabold hover:underline">Lot {startingNext.lot} · {startingNext.title}</Link>
+                  <Link href={itemCodePath(startingNext.code)} className="mt-1 block truncate font-extrabold hover:underline">Lot {startingNext.lot} · {startingNext.title}</Link>
                   <div className="mt-3"><Countdown to={startingNext.startsAt.toISOString()} /></div>
                   <p className="mt-3 text-xs text-white/60">{listingTime(startingNext.startsAt)}</p>
                 </>
@@ -176,7 +177,7 @@ export default async function Dashboard() {
               <ul className="space-y-3">
                 {hot.map((h) => (
                   <li key={h.id}>
-                    <Link href={`/lot/${h.lot}`} className="flex items-center gap-3 rounded-3xl bg-white p-3 pr-4 transition-shadow hover:shadow-lg hover:shadow-ink/10">
+                    <Link href={itemCodePath(h.code)} className="flex items-center gap-3 rounded-3xl bg-white p-3 pr-4 transition-shadow hover:shadow-lg hover:shadow-ink/10">
                       <ItemThumb lot={h.lot} image={h.images[0]?.filename ?? null} className="size-12 shrink-0 rounded-2xl" />
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-xs text-muted-foreground">Lot {h.lot} · {h._count.bids} bids</p>

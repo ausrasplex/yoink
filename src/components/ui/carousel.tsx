@@ -95,12 +95,15 @@ function Carousel({
 
   React.useEffect(() => {
     if (!api) return
-    onSelect(api)
+    // First arrow check on the next frame (from a callback, not the effect body: React lint's set-state-in-effect).
+    const frame = requestAnimationFrame(() => onSelect(api))
     api.on("reInit", onSelect)
     api.on("select", onSelect)
 
     return () => {
-      api?.off("select", onSelect)
+      cancelAnimationFrame(frame)
+      api.off("reInit", onSelect) // the stock version only removed "select"
+      api.off("select", onSelect)
     }
   }, [api, onSelect])
 

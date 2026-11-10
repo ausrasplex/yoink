@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { money } from "@/lib/format";
 
 export type BidResult =
-  | { ok: true; amount: number; outbid?: { userId: string; lot: number; title: string; minBid: number; endsAt: Date } }
+  | { ok: true; amount: number; outbid?: { userId: string; lot: number; code: string; title: string; minBid: number; endsAt: Date } }
   | { ok: false; error: string; minBid?: number };
 
 type Row = {
@@ -27,7 +27,7 @@ export async function placeBid(lot: number, userId: string, amount: number): Pro
   }
 
   return db.$transaction(async (tx) => {
-    const found = await tx.item.findUnique({ where: { lot }, select: { id: true, title: true } });
+    const found = await tx.item.findUnique({ where: { lot }, select: { id: true, code: true, title: true } });
     if (!found) return { ok: false, error: "Item not found." } as const;
 
     // The bidding window is checked on the locked row against the database clock (UTC, see CLAUDE.md), so a bid can't
@@ -57,7 +57,7 @@ export async function placeBid(lot: number, userId: string, amount: number): Pro
     await tx.item.update({ where: { id: found.id }, data: { currentBid: amount, highBidderId: userId } });
     // Tell the caller who was just displaced so it can notify them after the transaction commits.
     const outbid = row.highBidderId
-      ? { userId: row.highBidderId, lot, title: found.title, minBid: amount + row.minIncrement, endsAt: row.endsAt }
+      ? { userId: row.highBidderId, lot, code: found.code, title: found.title, minBid: amount + row.minIncrement, endsAt: row.endsAt }
       : undefined;
     return { ok: true, amount, outbid } as const;
   });

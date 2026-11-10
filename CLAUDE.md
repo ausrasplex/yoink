@@ -25,7 +25,7 @@ npm run dev            # dev server on :3000
 npm run build && npm start
 npx tsc --noEmit       # typecheck (run after every change). On a fresh checkout run `npx next typegen`
                        # (or one dev/build) first — Next generates global types like LayoutProps into .next/
-npm run lint           # one known error in stock src/components/ui/carousel.tsx — not ours, ignore
+npm run lint           # should be clean (carousel.tsx's stock set-state-in-effect issue is fixed)
 npx prisma migrate deploy   # apply migrations
 npx prisma generate         # after schema edits (also runs on npm install)
 npm run seed:demo      # demo users/items/bids/photos + demo admin admin@example.com — DESTRUCTIVE: replaces items, bids, USERs
@@ -162,5 +162,5 @@ See `.env.example`. Key ones: `DATABASE_URL`, `APP_URL` (what QR codes and email
 Done: server admin role (setup, branding, SMTP, admin invites), bidding, QR codes (sheet, per-item card with PNG/SVG download, logo + colour), roles, user settings (password, devices),
 admin users/items/history/search/setup, SMTP outbid + forgot-password emails, login limiting, CSV export, Docker.
 
-Known gaps / ideas: lint error in stock carousel.tsx; unit checks only for SVG sanitising (`npm run test:unit`); otherwise `tests/e2e` scripts;
+Known gaps / ideas: unit checks cover SVG sanitising, listings, themes and item codes (`npm run test:unit`); otherwise `tests/e2e` scripts;
 amounts are whole dollars only; no printable label-sheet sizes yet; no real-time push (polling every 3 s).

@@ -14,7 +14,9 @@ import { visibleToUsers } from "@/lib/listing";
 
 export type NotificationType = "outbid" | "won" | "lost" | "endingSoon" | "newItems";
 export type NotificationRow = {
-  id: string; type: NotificationType; lot: number | null; title: string; amount: number | null; count: number | null;
+  id: string; type: NotificationType; lot: number | null;
+  code: string | null; // the item's address (/i/<code>), looked up from lot; null if none or the item is gone
+  title: string; amount: number | null; count: number | null;
   createdAt: string; read: boolean;
 };
 
@@ -109,10 +111,14 @@ export async function listNotifications(userId: string, limit = 20): Promise<{ u
     db.notification.count({ where: { userId, readAt: null } }),
     db.notification.findMany({ where: { userId }, orderBy: { createdAt: "desc" }, take: limit }),
   ]);
+  const lots = [...new Set(rows.map((n) => n.lot).filter((l): l is number => l !== null))];
+  const codes = new Map(lots.length
+    ? (await db.item.findMany({ where: { lot: { in: lots } }, select: { lot: true, code: true } })).map((i) => [i.lot, i.code] as const)
+    : []);
   return {
     unread,
     items: rows.map((n) => ({
-      id: n.id, type: n.type as NotificationType, lot: n.lot, title: n.title, amount: n.amount, count: n.count,
+      id: n.id, type: n.type as NotificationType, lot: n.lot, code: n.lot === null ? null : codes.get(n.lot) ?? null, title: n.title, amount: n.amount, count: n.count,
       createdAt: n.createdAt.toISOString(), read: !!n.readAt,
     })),
   };

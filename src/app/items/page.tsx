@@ -69,7 +69,7 @@ export default async function ItemsPage({ searchParams }: { searchParams: Promis
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {shown.map(({ i, status }) => (
             <ItemCard
-              key={i.id} lot={i.lot} title={i.title} image={i.images[0]?.filename ?? null}
+              key={i.id} lot={i.lot} code={i.code} title={i.title} image={i.images[0]?.filename ?? null}
               price={i.currentBid ?? i.startingBid} bids={i._count.bids} status={status} noBidsYet={i.currentBid === null}
               startsAt={i.startsAt.toISOString()} endsAt={i.endsAt.toISOString()}
               hidden={i.hiddenUntilStart && phaseOf(i) === "scheduled"}

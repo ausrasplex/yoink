@@ -25,7 +25,8 @@ const KIND = {
 } as const;
 
 /** Where a notification goes: its item, or the Items page for a roll-up of several new items. */
-const hrefFor = (n: NotificationRow) => (n.lot === null ? "/items" : `/lot/${n.lot}`);
+// One item: its own address. Several new items: the Items page. (An item that's since been deleted: My Bids.)
+const hrefFor = (n: NotificationRow) => (n.code ? `/i/${n.code}` : n.lot === null ? "/items" : "/bids");
 /** Wording key: a roll-up of several new items uses the plural line. */
 const keyFor = (n: NotificationRow) => (n.type === "newItems" && n.lot === null ? "notifyNewItems" : (KIND[n.type] ?? KIND.outbid).key);
 

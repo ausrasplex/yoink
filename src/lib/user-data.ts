@@ -6,7 +6,7 @@ import { brandName } from "@/lib/format";
 import { phaseOf, type Phase } from "@/lib/listing";
 
 export type BidRow = {
-  lot: number; title: string; image: string | null;
+  lot: number; code: string; title: string; image: string | null; // code: the item's address, /i/<code>
   myBid: number; current: number; leading: boolean; bidCount: number;
   phase: Phase; startsAt: string; endsAt: string;
   claimedAt: string | null; // the winner marked it as collected
@@ -26,7 +26,7 @@ export async function getMyBids(userId: string): Promise<BidRow[]> {
   });
   return items
     .map((i) => ({
-      lot: i.lot, title: i.title, image: i.images[0]?.filename ?? null,
+      lot: i.lot, code: i.code, title: i.title, image: i.images[0]?.filename ?? null,
       myBid: i.bids[0].amount, current: i.currentBid ?? i.startingBid,
       leading: i.highBidderId === userId, bidCount: i._count.bids,
       phase: phaseOf(i), startsAt: i.startsAt.toISOString(), endsAt: i.endsAt.toISOString(),

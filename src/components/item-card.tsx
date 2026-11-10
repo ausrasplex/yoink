@@ -33,11 +33,11 @@ export function ItemThumb({ lot, image, className }: { lot: number; image: strin
 }
 
 export function ItemCard(p: {
-  lot: number; title: string; image: string | null; price: number; bids: number; status: Status; noBidsYet: boolean;
+  lot: number; code: string; title: string; image: string | null; price: number; bids: number; status: Status; noBidsYet: boolean;
   startsAt: string; endsAt: string; hidden?: boolean; // hidden: Admin view of a listing Users can't see yet
 }) {
   return (
-    <Link href={`/lot/${p.lot}`} className="group block rounded-3xl bg-white p-3 transition-shadow hover:shadow-lg hover:shadow-ink/10">
+    <Link href={`/i/${p.code}`} className="group block rounded-3xl bg-white p-3 transition-shadow hover:shadow-lg hover:shadow-ink/10">
       <div className="relative">
         <ItemThumb lot={p.lot} image={p.image} className="aspect-[4/3] rounded-2xl" />
         <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-xs font-bold text-ink backdrop-blur">Lot {p.lot}</span>

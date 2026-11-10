@@ -10,6 +10,7 @@ import { WinCelebration } from "@/components/theme/win-celebration";
 import { Button } from "@/components/ui/button";
 import { canBrowse, getAuction } from "@/lib/auction";
 import { requireUser } from "@/lib/auth";
+import { itemCodePath } from "@/lib/item-code";
 import { money } from "@/lib/format";
 import { getMyBids } from "@/lib/user-data";
 
@@ -62,7 +63,7 @@ export default async function BidsPage({ searchParams }: { searchParams: Promise
         <ul className="space-y-3">
           {shown.map((b) => (
             <li key={b.lot} className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-3xl bg-white p-3 pr-4 transition-shadow hover:shadow-lg hover:shadow-ink/10 sm:flex-nowrap">
-              <Link href={`/lot/${b.lot}`} className="flex min-w-0 flex-1 basis-full items-center gap-4 sm:basis-auto">
+              <Link href={itemCodePath(b.code)} className="flex min-w-0 flex-1 basis-full items-center gap-4 sm:basis-auto">
                 <ItemThumb lot={b.lot} image={b.image} className="size-16 shrink-0 rounded-2xl" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-bold text-ink">{b.title}</p>

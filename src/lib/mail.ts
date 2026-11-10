@@ -67,7 +67,7 @@ export async function sendTestEmail(to: string): Promise<{ ok: true } | { ok: fa
   }
 }
 
-export async function sendOutbidEmail(p: { userId: string; lot: number; title: string; amount: number; minBid: number; endsAt: Date }) {
+export async function sendOutbidEmail(p: { userId: string; lot: number; code: string; title: string; amount: number; minBid: number; endsAt: Date }) {
   try {
     const t = await transportFromSettings("outbid");
     const say = await themeCopy();
@@ -75,7 +75,7 @@ export async function sendOutbidEmail(p: { userId: string; lot: number; title: s
     const user = await db.user.findUnique({ where: { id: p.userId }, select: { name: true, email: true } });
     if (!user) return;
     const base = (process.env.APP_URL ?? "").replace(/\/$/, "");
-    const link = `${base}/lot/${p.lot}`;
+    const link = `${base}/i/${p.code}`;
     const ends = `\nBidding on this item closes ${p.endsAt.toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short", timeZone: process.env.TZ || "Australia/Melbourne" })}.\n`;
     await t.transport.sendMail({
       from: t.from,
@@ -145,7 +145,7 @@ export async function sendInviteEmail(p: { to: string; name: string; link: strin
   }
 }
 
-export type DigestItem = { lot: number; title: string; price: number; noBids: boolean; startsAt: Date; endsAt: Date };
+export type DigestItem = { lot: number; code: string; title: string; price: number; noBids: boolean; startsAt: Date; endsAt: Date };
 
 /**
  * Daily "new items" digest to every User who hasn't opted out. Sent one person at a time (each email is personal and has
@@ -165,7 +165,7 @@ export async function sendNewItemsDigest(items: DigestItem[]): Promise<number> {
     .map((i) => [
       `• Lot ${i.lot}: ${i.title}`,
       `  ${i.noBids ? "Starting bid" : "Current bid"} ${money(i.price)} · ${i.startsAt.getTime() > now ? `opens ${when(i.startsAt)}` : "open now"} · ends ${when(i.endsAt)}`,
-      `  ${base}/lot/${i.lot}`,
+      `  ${base}/i/${i.code}`,
     ].join("\n"))
     .join("\n\n");
   let sent = 0;
